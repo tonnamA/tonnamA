@@ -1,2 +1,1 @@
-# Shino
-Shino Shop
+#LOC Hackthon
