@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="try.css">
+    <link rel="stylesheet" href="responsive.css">
+</head>
+<body>
+    <!-- overnav -->
+    <div class="overnav" class="item">
+        <div class="flex">
+            <p>Welcome to Shino Shop</p> 
+            <div class="overnav-child" class="">
+                <h3><img src="./picture/Location.png" alt=""> Delivery to 91/157</h3>
+                <!-- <img src="./picture/Line 1.png" alt="" class="line"> -->
+                <h3><img src="./picture/Location.png" alt="" class="hide">Track your order</h3>
+                <!-- <img src="./picture/Line 1.png" alt="" class="line"> -->
+                <h3><img src="./picture/Location.png" alt="" class="hide">All offer</h3>
+            </div>
+        </div>
+    </div>
+    <!-- nav -->
+    <nav>
+        <div class="flex-nav">
+            <div class="mega">
+                <img src="./picture/Group 2.png" alt="">
+                <h1 class="item">MegaMart</h1>
+            </div>
+            <div class="input-container">
+                <span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <input type="text" id="input" placeholder="searchItem">
+            </div>
+            <div class="sign-in">
+                <button id="signinbtn"> <span class="icon"><i class="fa-solid fa-right-to-bracket"></i></span> sign-in/sign-up</button>
+            </div>
+        </div>
+    </nav>
+    <div class="line-out">
+        <img src="./picture/Line 3.png" alt="">
+    </div>
+    <!-- dropdawn -->
+    <!-- 1 dropdawn -->
+    <div class="dropdown-wrap">
+        <div class="dropdown">
+            <div class="drop-btn">Groceries</div>
+            <div class="dropdown-content">
+                <a href="#">Hi</a>
+                <a href="#">Hello</a>
+                <a href="#">Niggo</a>
+            </div>
+        </div>
+        <!-- 1 -->
+        <div class="dropdown">
+            <div class="drop-btn">Premium Fruit <i class="fa-solid fa-caret-down"></i></div>
+            <div class="dropdown-content">
+                <a href="#">Hi</a>
+                <a href="#">Hello</a>
+                <a href="#">Niggo</a>
+            </div>
+        </div>
+        <!-- 2 -->
+        <div class="dropdown">
+            <div class="drop-btn">Home & Kitchen <i class="fa-solid fa-caret-down"></i></div>
+            <div class="dropdown-content">
+                <a href="#">Hi</a>
+                <a href="#">Hello</a>
+                <a href="#">Niggo</a>
+            </div>
+        </div>
+        <!-- 3 -->
+        <div class="dropdown">
+            <div class="drop-btn">Fashion <i class="fa-solid fa-caret-down"></i></div>
+            <div class="dropdown-content">
+                <a href="#">Hi</a>
+                <a href="#">Hello</a>
+                <a href="#">Niggo</a>
+            </div>
+        </div>
+        <!-- 4 -->
+        <div class="dropdown">
+            <div class="drop-btn">Electronics <i class="fa-solid fa-caret-down"></i></div>
+            <div class="dropdown-content">
+                <a href="#">Hi</a>
+                <a href="#">Hello</a>
+                <a href="#">Niggo</a>
+            </div>
+        </div>
+        <!-- 5 -->
+        <div class="dropdown">
+            <div class="drop-btn">Beauty<i class="fa-solid fa-caret-down"></i></div>
+            <div class="dropdown-content">
+                <a href="#">Hi</a>
+                <a href="#">Hello</a>
+                <a href="#">Niggo</a>
+            </div>
+        </div>
+        <!-- 6 -->
+        <div class="dropdown">
+            <div class="drop-btn">Home Improvement<i class="fa-solid fa-caret-down"></i></div>
+            <div class="dropdown-content">
+                <a href="#">Hi</a>
+                <a href="#">Hello</a>
+                <a href="#">Niggo</a>
+            </div>
+        </div>
+        <!-- 7 -->
+        <div class="dropdown">
+            <div class="drop-btn">Sports<i class="fa-solid fa-caret-down"></i></div>
+            <div class="dropdown-content">
+                <a href="#">Hi</a>
+                <a href="#">Hello</a>
+                <a href="#">Niggo</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="line-out">
+        <img src="./picture/Line 3.png" alt="">
+    </div>
+    <!-- Slide -->
+    <div class="page-container">
+        <div class="slider-container">
+            <div class="slider" id="slider">
+                <div class="slide"><img src="./picture/1200px-x-400px-Acabado_HERO-IMAGE-2-1024x341.jpg" alt=""></div>
+                <div class="slide"><img src="./picture/hospital.jpeg" alt=""></div>
+                <div class="slide"><img src="./picture/programing.webp" alt=""></div>
+                <div class="slide"><img src="./picture/programing.webp" alt=""></div>
+            </div>    
+            <button onclick="Prevpage()" class="arrow left"><i class="fa-solid fa-arrow-left"></i></button>
+            <button onclick="Nextpage()" class="arrow right"><i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </div>
+    <!-- Main -->
+    <div class="main-flex">
+        <h1 style="font-weight: 200; font-size: 24px;" class="first">Grab the best deal on <span style="color: #008ECC;">Smartphone</span></h1>
+        <!-- <h2 style="font-size: 18px; font-weight: 200;" class="second">View all <i class="fa-solid fa-arrow-right"></i></h2> -->
+    </div>
+    <div class="line-out">
+        <img src="./picture/Line 3.png" alt="">
+    </div>
+    <main>
+        <div class="block-wrap">
+            <div class="block">
+                <div class="head">
+                    <img src="./picture/phone1.png" alt="" class="" >
+                </div>
+                <div class="low">
+                    <h2 style="font-size: 16px; font-weight: 200; padding-left: 10px;" >Galaxy S22 Ultra</h2>
+                    <div class="cut" style="display: flex;">
+                        <p style="font-size: 16px; font-weight: 200; padding-left: 10px;">$100</p>
+                        <p style="font-size: 16px; font-weight: 300; padding-left: 10px; text-decoration: line-through; color: red;">$200</p>
+                    </div>
+                    <img src="./picture/Line 26.png" alt="">
+                    <h3 style="color: #249B3E; font-weight: 200; font-size: 16px; padding-left: 10px;">save - $100</h3>
+                </div>
+           </div>
+           <!-- block 1 -->
+            <div class="block">
+                <div class="head">
+                    <img src="./picture/phone1.png" alt="" class="" >
+                </div>
+                <div class="low">
+                    <h2 style="font-size: 16px; font-weight: 200; padding-left: 10px;" >Galaxy S22 Ultra</h2>
+                    <div class="cut" style="display: flex;">
+                        <p style="font-size: 16px; font-weight: 200; padding-left: 10px;">$100</p>
+                        <p style="font-size: 16px; font-weight: 300; padding-left: 10px; text-decoration: line-through; color: red;">$200</p>
+                    </div>
+                    <img src="./picture/Line 26.png" alt="">
+                    <h3 style="color: #249B3E; font-weight: 200; font-size: 16px; padding-left: 10px;">save - $100</h3>
+                </div>
+           </div>
+           <!-- block 2 -->
+            <div class="block">
+                <div class="head">
+                    <img src="./picture/phone1.png" alt="" class="" >
+                </div>
+                <div class="low">
+                    <h2 style="font-size: 16px; font-weight: 200; padding-left: 10px;" >Galaxy S22 Ultra</h2>
+                    <div class="cut" style="display: flex;">
+                        <p style="font-size: 16px; font-weight: 200; padding-left: 10px;">$100</p>
+                        <p style="font-size: 16px; font-weight: 300; padding-left: 10px; text-decoration: line-through; color: red;">$200</p>
+                    </div>
+                    <img src="./picture/Line 26.png" alt="">
+                    <h3 style="color: #249B3E; font-weight: 200; font-size: 16px; padding-left: 10px;">save - $100</h3>
+                </div>
+           </div>
+           <!-- block 3 -->
+            <div class="block">
+                <div class="head">
+                    <img src="./picture/phone1.png" alt="" class="" >
+                </div>
+                <div class="low">
+                    <h2 style="font-size: 16px; font-weight: 200; padding-left: 10px;" >Galaxy S22 Ultra</h2>
+                    <div class="cut" style="display: flex;">
+                        <p style="font-size: 16px; font-weight: 200; padding-left: 10px;">$100</p>
+                        <p style="font-size: 16px; font-weight: 300; padding-left: 10px; text-decoration: line-through; color: red;">$200</p>
+                    </div>
+                    <img src="./picture/Line 26.png" alt="">
+                    <h3 style="color: #249B3E; font-weight: 200; font-size: 16px; padding-left: 10px;">save - $100</h3>
+                </div>
+           </div>
+           <!-- block 4 -->
+            <div class="block">
+                <div class="head">
+                    <img src="./picture/phone1.png" alt="" class="" >
+                </div>
+                <div class="low">
+                    <h2 style="font-size: 16px; font-weight: 200; padding-left: 10px;" >Galaxy S22 Ultra</h2>
+                    <div class="cut" style="display: flex;">
+                        <p style="font-size: 16px; font-weight: 200; padding-left: 10px;">$100</p>
+                        <p style="font-size: 16px; font-weight: 300; padding-left: 10px; text-decoration: line-through; color: red;">$200</p>
+                    </div>
+                    <img src="./picture/Line 26.png" alt="">
+                    <h3 style="color: #249B3E; font-weight: 200; font-size: 16px; padding-left: 10px;">save - $100</h3>
+                </div>
+           </div>
+        </div>
+    </main>
+    <!-- Main Content -->
+    
+    <h1 style="font-size: 24px; font-weight: 200; padding-left: 100px; padding-top: 100px;">Shop Form Top <span style="color: #008ECC;">Categories</span></h1>
+    <!-- block1 1 -->
+    <div class="block1-wrap">
+        <div class="block1">
+            <div class="high">
+                <img src="./picture/phone1.png" alt="">
+            </div>
+            <p>Mobile</p>
+        </div>
+        <!-- 2 -->
+        <div class="block1">
+            <div class="high">
+                <img src="./picture/phone1.png" alt="">
+            </div>
+            <p>Mobile</p>
+        </div>
+        <!-- 3 -->
+        <div class="block1">
+            <div class="high">
+                <img src="./picture/phone1.png" alt="">
+            </div>
+            <p>Mobile</p>
+        </div>
+        <!-- 4 -->
+        <div class="block1">
+            <div class="high">
+                <img src="./picture/phone1.png" alt="">
+            </div>
+            <p>Mobile</p>
+        </div>
+        <!-- 5 -->
+        <div class="block1">
+            <div class="high">
+                <img src="./picture/phone1.png" alt="">
+            </div>
+            <p>Mobile</p>
+        </div>
+        <!-- 6 -->
+        <div class="block1">
+            <div class="high">
+                <img src="./picture/phone1.png" alt="">
+            </div>
+            <p>Mobile</p>
+        </div>
+        <!-- 7 -->
+        <div class="block1">
+            <div class="high">
+                <img src="./picture/phone1.png" alt="">
+            </div>
+            <p>Mobile</p>
+        </div>
+        <!-- 8 -->
+        <div class="block1">
+            <div class="high">
+                <img src="./picture/phone1.png" alt="">
+            </div>
+            <p>Mobile</p>
+        </div>
+    </div>
+    <!-- <div class="line-out">
+        <img src="./picture/Line 3.png" alt="">
+    </div>
+     -->
+    <!-- Electronics -->
+    <h1 style="font-size: 24px; font-weight: 200; padding-left: 100px; padding-top:50px ;">Top <span style="color: #008ECC;">Electronics Brands</span> </h1>
+    <div class="line-out">
+        <img src="./picture/Line 3.png" alt="">
+    </div>
+    <div class="content">
+        <img src="./picture/1200px-x-400px-Acabado_HERO-IMAGE-2-1024x341.jpg" alt="">
+        <img src="./picture/1200px-x-400px-Acabado_HERO-IMAGE-2-1024x341.jpg" alt="">
+        <img src="./picture/1200px-x-400px-Acabado_HERO-IMAGE-2-1024x341.jpg" alt="">
+        <img src="./picture/1200px-x-400px-Acabado_HERO-IMAGE-2-1024x341.jpg" alt="">
+        <img src="./picture/1200px-x-400px-Acabado_HERO-IMAGE-2-1024x341.jpg" alt="">
+    </div>
+
+</body>
+<script src="try.js""></script>
+</html>
