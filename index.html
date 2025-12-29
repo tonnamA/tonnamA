@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Year Celebration & Memory Board</title>
+    <title>New Year Celebration & Memory Board (Admin Mode)</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -66,7 +66,6 @@
             overflow-x: hidden;
         }
 
-        /* Snow Effect using pure CSS for performance */
         .snowflake {
             color: #fff;
             font-size: 1em;
@@ -133,6 +132,13 @@
             background: rgba(255, 215, 0, 0.5);
             border-radius: 4px;
         }
+
+        /* Admin Button Pulse when active */
+        .admin-active {
+            color: #ef4444;
+            /* Red color */
+            animation: pulse 2s infinite;
+        }
     </style>
 </head>
 
@@ -145,13 +151,20 @@
             <div class="font-heading font-bold text-xl md:text-2xl text-festive-gold flex items-center gap-2">
                 <i data-lucide="party-popper"></i> New Year 202X
             </div>
-            <div class="flex gap-4 md:gap-8 text-sm md:text-base">
-                <button onclick="router('countdown')" id="nav-countdown"
-                    class="nav-btn transition hover:text-festive-gold">Countdown</button>
-                <button onclick="router('memory')" id="nav-memory"
-                    class="nav-btn transition hover:text-festive-gold">Memories</button>
-                <button onclick="router('links')" id="nav-links"
-                    class="nav-btn transition hover:text-festive-gold">Links</button>
+
+            <div class="flex items-center gap-4 md:gap-8">
+                <div class="flex gap-4 md:gap-8 text-sm md:text-base">
+                    <button onclick="router('countdown')" id="nav-countdown"
+                        class="nav-btn transition hover:text-festive-gold">Countdown</button>
+                    <button onclick="router('memory')" id="nav-memory"
+                        class="nav-btn transition hover:text-festive-gold">Memories</button>
+                    <button onclick="router('links')" id="nav-links"
+                        class="nav-btn transition hover:text-festive-gold">Links</button>
+                </div>
+                <button onclick="toggleAdmin()" id="admin-btn" class="text-white/50 hover:text-white transition"
+                    title="Admin Login">
+                    <i data-lucide="lock"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -198,6 +211,8 @@
                 <h2 class="font-heading text-3xl md:text-4xl font-bold text-festive-gold mb-2">ทิ้งเรื่องเก่า
                     ขอเรื่องใหม่</h2>
                 <p class="text-gray-200">เขียนระบายสิ่งที่ไม่ดีทิ้งไว้ที่ปีเก่า หรือขอพรสำหรับปีใหม่</p>
+                <p id="admin-status-mem" class="text-red-400 text-sm hidden mt-2">* Admin Mode Active: You can delete
+                    cards *</p>
             </div>
 
             <div class="glass-panel p-6 rounded-2xl mb-10 max-w-2xl mx-auto border-t-4 border-festive-red">
@@ -230,6 +245,7 @@
             <div class="text-center mb-8">
                 <h2 class="font-heading text-3xl font-bold text-festive-gold">My Quick Links</h2>
                 <p class="text-gray-300">รวมลิงก์สำคัญ แปะไว้ใช้ง่ายๆ</p>
+                <p id="admin-status-link" class="text-red-400 text-sm hidden mt-2">* Admin Mode Active *</p>
             </div>
 
             <div class="glass-panel p-4 rounded-xl mb-8 flex flex-col md:flex-row gap-3">
@@ -265,24 +281,60 @@
     </div>
 
     <script>
+        // --- ADMIN SYSTEM VARIABLES ---
+        let isAdmin = false;
+        const ADMIN_PASS = "Tonnam2014pama2517";
+
         // --- 1. Navigation Logic ---
         function router(pageId) {
-            // Hide all pages
             document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active-nav'));
 
-            // Show selected page
             document.getElementById(`page-${pageId}`).classList.remove('hidden');
             document.getElementById(`nav-${pageId}`).classList.add('active-nav');
 
-            // Re-render icons just in case
             lucide.createIcons();
         }
 
-        // Initialize default page
         router('countdown');
 
-        // --- 2. Countdown Logic ---
+        // --- 2. Admin Logic ---
+        function toggleAdmin() {
+            if (isAdmin) {
+                // Logout Logic
+                isAdmin = false;
+                alert('Admin Logged Out');
+                document.getElementById('admin-btn').classList.remove('text-red-500', 'admin-active');
+                document.getElementById('admin-btn').classList.add('text-white/50');
+
+                // Hide Status Texts
+                document.getElementById('admin-status-mem').classList.add('hidden');
+                document.getElementById('admin-status-link').classList.add('hidden');
+            } else {
+                // Login Logic
+                const input = prompt("Enter Admin Password:");
+                if (input === ADMIN_PASS) {
+                    isAdmin = true;
+                    alert('Admin Access Granted!');
+                    document.getElementById('admin-btn').classList.remove('text-white/50');
+                    document.getElementById('admin-btn').classList.add('text-red-500', 'admin-active');
+
+                    // Show Status Texts
+                    document.getElementById('admin-status-mem').classList.remove('hidden');
+                    document.getElementById('admin-status-link').classList.remove('hidden');
+                } else if (input !== null) {
+                    alert('Incorrect Password');
+                    return;
+                }
+            }
+
+            // Re-render components to show/hide delete buttons
+            loadMemories();
+            loadLinks();
+            lucide.createIcons();
+        }
+
+        // --- 3. Countdown Logic ---
         function updateCountdown() {
             const now = new Date();
             const tomorrow = new Date(now);
@@ -294,35 +346,27 @@
             const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
             const m = Math.floor((diff / (1000 * 60)) % 60);
             const s = Math.floor((diff / 1000) % 60);
-            const ms = Math.floor((diff % 1000) / 10); // show 2 digits
+            const ms = Math.floor((diff % 1000) / 10);
 
             document.getElementById('c-hours').innerText = String(h).padStart(2, '0');
             document.getElementById('c-minutes').innerText = String(m).padStart(2, '0');
             document.getElementById('c-seconds').innerText = String(s).padStart(2, '0');
             document.getElementById('c-ms').innerText = String(ms).padStart(2, '0');
 
-            // Trigger Celebration Logic
-            // Logic: If it is exactly midnight (or within first second) AND today is Jan 1st
             if (h === 0 && m === 0 && s === 0 && now.getDate() === 1 && now.getMonth() === 0) {
-                triggerCelebration();
-            }
-
-            // For Demo: Trigger if any midnight (can be removed for strict NY logic)
-            if (h === 0 && m === 0 && s === 0 && diff < 1000) {
                 triggerCelebration();
             }
         }
 
-        setInterval(updateCountdown, 50); // High refresh rate for smooth MS
+        setInterval(updateCountdown, 50);
 
-        // --- 3. Celebration Logic ---
+        // --- 4. Celebration Logic ---
         function triggerCelebration() {
             const modal = document.getElementById('celebration-modal');
             if (modal.classList.contains('hidden')) {
                 modal.classList.remove('hidden');
                 setTimeout(() => modal.classList.remove('opacity-0'), 100);
 
-                // Fire Confetti
                 const duration = 15 * 1000;
                 const end = Date.now() + duration;
 
@@ -346,9 +390,7 @@
                         colors: ['#D42426', '#FFD700', '#ffffff']
                     });
 
-                    if (Date.now() < end) {
-                        requestAnimationFrame(frame);
-                    }
+                    if (Date.now() < end) requestAnimationFrame(frame);
                 }());
             }
         }
@@ -359,47 +401,57 @@
             setTimeout(() => modal.classList.add('hidden'), 1000);
         }
 
-        // --- 4. Memory Board Logic (LocalStorage) ---
+        // --- 5. Memory Board Logic (Updated for Admin) ---
         function loadMemories() {
             const memories = JSON.parse(localStorage.getItem('ny_memories') || '[]');
             const grid = document.getElementById('memory-grid');
             grid.innerHTML = '';
 
-            memories.reverse().forEach(mem => { // Show newest first
-                const card = document.createElement('div');
+            // Map original index to handle deletion correctly because we reverse display
+            memories.map((mem, index) => ({
+                    ...mem,
+                    originalIndex: index
+                }))
+                .reverse().forEach(mem => {
+                    const card = document.createElement('div');
 
-                // Color coding based on category
-                let accentColor = 'border-l-4 border-gray-400';
-                let icon = 'message-square';
-                if (mem.cat === 'wish') {
-                    accentColor = 'border-l-4 border-festive-gold';
-                    icon = 'sparkles';
-                }
-                if (mem.cat === 'love') {
-                    accentColor = 'border-l-4 border-pink-500';
-                    icon = 'heart';
-                }
-                if (mem.cat === 'work') {
-                    accentColor = 'border-l-4 border-blue-500';
-                    icon = 'briefcase';
-                }
-                if (mem.cat === 'vent') {
-                    accentColor = 'border-l-4 border-gray-500';
-                    icon = 'trash-2';
-                }
+                    let accentColor = 'border-l-4 border-gray-400';
+                    let icon = 'message-square';
+                    if (mem.cat === 'wish') {
+                        accentColor = 'border-l-4 border-festive-gold';
+                        icon = 'sparkles';
+                    }
+                    if (mem.cat === 'love') {
+                        accentColor = 'border-l-4 border-pink-500';
+                        icon = 'heart';
+                    }
+                    if (mem.cat === 'work') {
+                        accentColor = 'border-l-4 border-blue-500';
+                        icon = 'briefcase';
+                    }
+                    if (mem.cat === 'vent') {
+                        accentColor = 'border-l-4 border-gray-500';
+                        icon = 'trash-2';
+                    }
 
-                card.className =
-                    `glass-panel p-5 rounded-lg transform transition hover:-translate-y-1 hover:shadow-xl relative ${accentColor}`;
-                card.innerHTML = `
+                    // Admin Delete Button Logic
+                    const deleteBtn = isAdmin ?
+                        `<button onclick="deleteMemory(${mem.originalIndex})" class="absolute top-4 right-12 text-red-500 hover:text-red-300 bg-black/20 p-1 rounded transition" title="Delete Card"><i data-lucide="trash"></i></button>` :
+                        '';
+
+                    card.className =
+                        `glass-panel p-5 rounded-lg transform transition hover:-translate-y-1 hover:shadow-xl relative ${accentColor}`;
+                    card.innerHTML = `
+                    ${deleteBtn}
                     <div class="absolute top-4 right-4 text-white/30"><i data-lucide="${icon}"></i></div>
-                    <p class="text-white mb-4 pr-6 leading-relaxed font-light">"${mem.text}"</p>
+                    <p class="text-white mb-4 pr-6 leading-relaxed font-light break-words">"${mem.text}"</p>
                     <div class="text-right">
                         <span class="text-sm font-bold text-festive-gold block">- ${mem.author}</span>
                         <span class="text-xs text-gray-400">${mem.date}</span>
                     </div>
                 `;
-                grid.appendChild(card);
-            });
+                    grid.appendChild(card);
+                });
             lucide.createIcons();
         }
 
@@ -421,14 +473,23 @@
             memories.push(newMem);
             localStorage.setItem('ny_memories', JSON.stringify(memories));
 
-            // Clear inputs
             document.getElementById('mem-text').value = '';
             document.getElementById('mem-author').value = '';
 
             loadMemories();
         }
 
-        // --- 5. Link Sharing Logic ---
+        // Admin: Delete Memory Function
+        function deleteMemory(index) {
+            if (!confirm('ยืนยันลบการ์ดใบนี้?')) return;
+
+            const memories = JSON.parse(localStorage.getItem('ny_memories') || '[]');
+            memories.splice(index, 1);
+            localStorage.setItem('ny_memories', JSON.stringify(memories));
+            loadMemories();
+        }
+
+        // --- 6. Link Sharing Logic (Updated for Admin) ---
         function loadLinks() {
             const links = JSON.parse(localStorage.getItem('ny_links') || '[]');
             const list = document.getElementById('links-list');
@@ -436,16 +497,21 @@
 
             links.forEach((link, index) => {
                 const item = document.createElement('div');
+
+                // Admin Delete Button Visibility
+                const deleteClass = isAdmin ? 'opacity-100 text-red-500 hover:text-red-700' :
+                    'opacity-0 pointer-events-none';
+
                 item.className =
                     'glass-panel p-4 rounded-lg flex justify-between items-center group hover:bg-white/10 transition';
                 item.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="bg-festive-green/20 p-2 rounded-full text-festive-green">
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <div class="bg-festive-green/20 p-2 rounded-full text-festive-green flex-shrink-0">
                             <i data-lucide="link"></i>
                         </div>
-                        <a href="${link.url}" target="_blank" class="font-bold text-lg hover:text-festive-gold transition">${link.name}</a>
+                        <a href="${link.url}" target="_blank" class="font-bold text-lg hover:text-festive-gold transition truncate">${link.name}</a>
                     </div>
-                    <button onclick="deleteLink(${index})" class="text-gray-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition">
+                    <button onclick="deleteLink(${index})" class="${deleteClass} transition ml-2" title="Delete Link">
                         <i data-lucide="x-circle"></i>
                     </button>
                 `;
@@ -473,7 +539,13 @@
             loadLinks();
         }
 
+        // Admin: Delete Link Function
         function deleteLink(index) {
+            // Extra check for security (UI hides it, but logic should check too)
+            if (!isAdmin) return;
+
+            if (!confirm('ยืนยันลบลิงก์นี้?')) return;
+
             const links = JSON.parse(localStorage.getItem('ny_links') || '[]');
             links.splice(index, 1);
             localStorage.setItem('ny_links', JSON.stringify(links));
@@ -481,7 +553,6 @@
         }
 
         // --- Init ---
-        // Generate Snowflakes CSS
         function createSnow() {
             const snowContainer = document.getElementById('snow-container');
             for (let i = 0; i < 50; i++) {
