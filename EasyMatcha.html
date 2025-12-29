@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Year Celebration & Memory Board</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Sarabun:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        festive: {
+                            red: '#D42426',
+                            darkRed: '#8B0000',
+                            gold: '#FFD700',
+                            green: '#165B33',
+                            cream: '#FDF5E6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Sarabun', 'sans-serif'],
+                        heading: ['Kanit', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': {
+                                transform: 'translateY(0)'
+                            },
+                            '50%': {
+                                transform: 'translateY(-10px)'
+                            },
+                        },
+                        fadeIn: {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateY(10px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background: radial-gradient(circle at center, #2b32b2 0%, #141e30 100%);
+            overflow-x: hidden;
+        }
+
+        /* Snow Effect using pure CSS for performance */
+        .snowflake {
+            color: #fff;
+            font-size: 1em;
+            font-family: Arial;
+            text-shadow: 0 0 1px #000;
+            position: fixed;
+            top: -10%;
+            z-index: 0;
+            user-select: none;
+            cursor: default;
+            animation-name: snowflakes-fall, snowflakes-shake;
+            animation-duration: 10s, 3s;
+            animation-timing-function: linear, ease-in-out;
+            animation-iteration-count: infinite, infinite;
+            animation-play-state: running, running;
+        }
+
+        @keyframes snowflakes-fall {
+            0% {
+                top: -10%;
+            }
+
+            100% {
+                top: 100%;
+            }
+        }
+
+        @keyframes snowflakes-shake {
+            0% {
+                transform: translateX(0px);
+            }
+
+            50% {
+                transform: translateX(80px);
+            }
+
+            100% {
+                transform: translateX(0px);
+            }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .active-nav {
+            color: #FFD700;
+            border-bottom: 2px solid #FFD700;
+        }
+
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 0, 0.5);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body class="text-white min-h-screen flex flex-col font-sans relative">
+
+    <div id="snow-container" class="pointer-events-none fixed inset-0 z-0"></div>
+
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-panel px-4 py-3">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="font-heading font-bold text-xl md:text-2xl text-festive-gold flex items-center gap-2">
+                <i data-lucide="party-popper"></i> New Year 202X
+            </div>
+            <div class="flex gap-4 md:gap-8 text-sm md:text-base">
+                <button onclick="router('countdown')" id="nav-countdown"
+                    class="nav-btn transition hover:text-festive-gold">Countdown</button>
+                <button onclick="router('memory')" id="nav-memory"
+                    class="nav-btn transition hover:text-festive-gold">Memories</button>
+                <button onclick="router('links')" id="nav-links"
+                    class="nav-btn transition hover:text-festive-gold">Links</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-20 pb-10 px-4 z-10 max-w-4xl mx-auto w-full">
+
+        <section id="page-countdown"
+            class="page-section hidden flex flex-col items-center justify-center min-h-[70vh] text-center animate-fade-in">
+            <h1
+                class="font-heading text-4xl md:text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-festive-gold to-white">
+                Countdown to Tomorrow
+            </h1>
+            <p class="text-gray-300 mb-10 text-lg">เตรียมตัวก้าวสู่ช่วงเวลาใหม่</p>
+
+            <div class="grid grid-cols-4 gap-4 md:gap-8 mb-12 w-full max-w-2xl">
+                <div class="glass-panel p-4 rounded-xl">
+                    <span id="c-hours"
+                        class="block text-4xl md:text-6xl font-bold font-heading text-festive-red">00</span>
+                    <span class="text-xs md:text-sm text-gray-300 uppercase">Hours</span>
+                </div>
+                <div class="glass-panel p-4 rounded-xl">
+                    <span id="c-minutes"
+                        class="block text-4xl md:text-6xl font-bold font-heading text-festive-gold">00</span>
+                    <span class="text-xs md:text-sm text-gray-300 uppercase">Minutes</span>
+                </div>
+                <div class="glass-panel p-4 rounded-xl">
+                    <span id="c-seconds" class="block text-4xl md:text-6xl font-bold font-heading text-white">00</span>
+                    <span class="text-xs md:text-sm text-gray-300 uppercase">Seconds</span>
+                </div>
+                <div class="glass-panel p-4 rounded-xl">
+                    <span id="c-ms" class="block text-4xl md:text-6xl font-bold font-heading text-gray-400">00</span>
+                    <span class="text-xs md:text-sm text-gray-300 uppercase">Millisec</span>
+                </div>
+            </div>
+
+            <div class="animate-float">
+                <img src="https://cdn-icons-png.flaticon.com/512/3790/3790117.png" alt="Gift"
+                    class="w-32 h-32 md:w-48 md:h-48 drop-shadow-lg filter brightness-110">
+            </div>
+        </section>
+
+        <section id="page-memory" class="page-section hidden animate-fade-in w-full">
+            <div class="text-center mb-10">
+                <h2 class="font-heading text-3xl md:text-4xl font-bold text-festive-gold mb-2">ทิ้งเรื่องเก่า
+                    ขอเรื่องใหม่</h2>
+                <p class="text-gray-200">เขียนระบายสิ่งที่ไม่ดีทิ้งไว้ที่ปีเก่า หรือขอพรสำหรับปีใหม่</p>
+            </div>
+
+            <div class="glass-panel p-6 rounded-2xl mb-10 max-w-2xl mx-auto border-t-4 border-festive-red">
+                <div class="grid gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <select id="mem-category"
+                            class="bg-gray-800/50 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-festive-gold outline-none">
+                            <option value="wish">✨ ขอพรปีใหม่ (Wishes)</option>
+                            <option value="love">❤️ ความรัก (Love)</option>
+                            <option value="work">💼 การงาน (Work)</option>
+                            <option value="vent">🗑️ ระบายความทุกข์ (Vent)</option>
+                        </select>
+                        <input type="text" id="mem-author" placeholder="ชื่อผู้เขียน (นามแฝงก็ได้)"
+                            class="bg-gray-800/50 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-festive-gold outline-none">
+                    </div>
+                    <textarea id="mem-text" rows="3" placeholder="เขียนข้อความของคุณที่นี่..."
+                        class="bg-gray-800/50 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-festive-gold outline-none"></textarea>
+                    <button onclick="addMemory()"
+                        class="bg-gradient-to-r from-festive-red to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition hover:scale-105 flex justify-center items-center gap-2">
+                        <i data-lucide="send"></i> โพสต์ข้อความ
+                    </button>
+                </div>
+            </div>
+
+            <div id="memory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+        </section>
+
+        <section id="page-links" class="page-section hidden animate-fade-in w-full max-w-2xl mx-auto">
+            <div class="text-center mb-8">
+                <h2 class="font-heading text-3xl font-bold text-festive-gold">My Quick Links</h2>
+                <p class="text-gray-300">รวมลิงก์สำคัญ แปะไว้ใช้ง่ายๆ</p>
+            </div>
+
+            <div class="glass-panel p-4 rounded-xl mb-8 flex flex-col md:flex-row gap-3">
+                <input type="text" id="link-name" placeholder="ชื่อเว็บ (เช่น Shopee)"
+                    class="flex-1 bg-gray-800/50 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-festive-green outline-none">
+                <input type="url" id="link-url" placeholder="URL (https://...)"
+                    class="flex-[2] bg-gray-800/50 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-festive-green outline-none">
+                <button onclick="addLink()"
+                    class="bg-festive-green hover:bg-green-700 text-white font-bold px-6 py-3 rounded-lg transition whitespace-nowrap">
+                    <i data-lucide="plus"></i> เพิ่ม
+                </button>
+            </div>
+
+            <div id="links-list" class="space-y-3">
+            </div>
+        </section>
+
+    </main>
+
+    <div id="celebration-modal"
+        class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center hidden opacity-0 transition-opacity duration-1000">
+        <div class="text-center p-8 relative">
+            <h1
+                class="font-heading text-6xl md:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-festive-gold via-red-500 to-festive-gold animate-bounce mb-4">
+                HAPPY NEW YEAR!
+            </h1>
+            <p class="text-2xl text-white font-light">ขอให้เป็นปีที่ดีของคุณ</p>
+            <button onclick="closeModal()"
+                class="mt-8 px-8 py-2 border border-white/50 rounded-full hover:bg-white hover:text-black transition">
+                Close Celebration
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Navigation Logic ---
+        function router(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active-nav'));
+
+            // Show selected page
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+            document.getElementById(`nav-${pageId}`).classList.add('active-nav');
+
+            // Re-render icons just in case
+            lucide.createIcons();
+        }
+
+        // Initialize default page
+        router('countdown');
+
+        // --- 2. Countdown Logic ---
+        function updateCountdown() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0);
+
+            const diff = tomorrow - now;
+
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / (1000 * 60)) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+            const ms = Math.floor((diff % 1000) / 10); // show 2 digits
+
+            document.getElementById('c-hours').innerText = String(h).padStart(2, '0');
+            document.getElementById('c-minutes').innerText = String(m).padStart(2, '0');
+            document.getElementById('c-seconds').innerText = String(s).padStart(2, '0');
+            document.getElementById('c-ms').innerText = String(ms).padStart(2, '0');
+
+            // Trigger Celebration Logic
+            // Logic: If it is exactly midnight (or within first second) AND today is Jan 1st
+            if (h === 0 && m === 0 && s === 0 && now.getDate() === 1 && now.getMonth() === 0) {
+                triggerCelebration();
+            }
+
+            // For Demo: Trigger if any midnight (can be removed for strict NY logic)
+            if (h === 0 && m === 0 && s === 0 && diff < 1000) {
+                triggerCelebration();
+            }
+        }
+
+        setInterval(updateCountdown, 50); // High refresh rate for smooth MS
+
+        // --- 3. Celebration Logic ---
+        function triggerCelebration() {
+            const modal = document.getElementById('celebration-modal');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.remove('opacity-0'), 100);
+
+                // Fire Confetti
+                const duration = 15 * 1000;
+                const end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({
+                        particleCount: 5,
+                        angle: 60,
+                        spread: 55,
+                        origin: {
+                            x: 0
+                        },
+                        colors: ['#D42426', '#FFD700', '#ffffff']
+                    });
+                    confetti({
+                        particleCount: 5,
+                        angle: 120,
+                        spread: 55,
+                        origin: {
+                            x: 1
+                        },
+                        colors: ['#D42426', '#FFD700', '#ffffff']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('celebration-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 1000);
+        }
+
+        // --- 4. Memory Board Logic (LocalStorage) ---
+        function loadMemories() {
+            const memories = JSON.parse(localStorage.getItem('ny_memories') || '[]');
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = '';
+
+            memories.reverse().forEach(mem => { // Show newest first
+                const card = document.createElement('div');
+
+                // Color coding based on category
+                let accentColor = 'border-l-4 border-gray-400';
+                let icon = 'message-square';
+                if (mem.cat === 'wish') {
+                    accentColor = 'border-l-4 border-festive-gold';
+                    icon = 'sparkles';
+                }
+                if (mem.cat === 'love') {
+                    accentColor = 'border-l-4 border-pink-500';
+                    icon = 'heart';
+                }
+                if (mem.cat === 'work') {
+                    accentColor = 'border-l-4 border-blue-500';
+                    icon = 'briefcase';
+                }
+                if (mem.cat === 'vent') {
+                    accentColor = 'border-l-4 border-gray-500';
+                    icon = 'trash-2';
+                }
+
+                card.className =
+                    `glass-panel p-5 rounded-lg transform transition hover:-translate-y-1 hover:shadow-xl relative ${accentColor}`;
+                card.innerHTML = `
+                    <div class="absolute top-4 right-4 text-white/30"><i data-lucide="${icon}"></i></div>
+                    <p class="text-white mb-4 pr-6 leading-relaxed font-light">"${mem.text}"</p>
+                    <div class="text-right">
+                        <span class="text-sm font-bold text-festive-gold block">- ${mem.author}</span>
+                        <span class="text-xs text-gray-400">${mem.date}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function addMemory() {
+            const cat = document.getElementById('mem-category').value;
+            const text = document.getElementById('mem-text').value;
+            const author = document.getElementById('mem-author').value || 'Anonymous';
+
+            if (!text) return alert('กรุณาเขียนข้อความก่อนครับ');
+
+            const memories = JSON.parse(localStorage.getItem('ny_memories') || '[]');
+            const newMem = {
+                cat,
+                text,
+                author,
+                date: new Date().toLocaleDateString('th-TH')
+            };
+
+            memories.push(newMem);
+            localStorage.setItem('ny_memories', JSON.stringify(memories));
+
+            // Clear inputs
+            document.getElementById('mem-text').value = '';
+            document.getElementById('mem-author').value = '';
+
+            loadMemories();
+        }
+
+        // --- 5. Link Sharing Logic ---
+        function loadLinks() {
+            const links = JSON.parse(localStorage.getItem('ny_links') || '[]');
+            const list = document.getElementById('links-list');
+            list.innerHTML = '';
+
+            links.forEach((link, index) => {
+                const item = document.createElement('div');
+                item.className =
+                    'glass-panel p-4 rounded-lg flex justify-between items-center group hover:bg-white/10 transition';
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="bg-festive-green/20 p-2 rounded-full text-festive-green">
+                            <i data-lucide="link"></i>
+                        </div>
+                        <a href="${link.url}" target="_blank" class="font-bold text-lg hover:text-festive-gold transition">${link.name}</a>
+                    </div>
+                    <button onclick="deleteLink(${index})" class="text-gray-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition">
+                        <i data-lucide="x-circle"></i>
+                    </button>
+                `;
+                list.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        function addLink() {
+            const name = document.getElementById('link-name').value;
+            const url = document.getElementById('link-url').value;
+
+            if (!name || !url) return alert('กรุณากรอกทั้งชื่อและ URL ครับ');
+
+            const links = JSON.parse(localStorage.getItem('ny_links') || '[]');
+            links.push({
+                name,
+                url
+            });
+            localStorage.setItem('ny_links', JSON.stringify(links));
+
+            document.getElementById('link-name').value = '';
+            document.getElementById('link-url').value = '';
+
+            loadLinks();
+        }
+
+        function deleteLink(index) {
+            const links = JSON.parse(localStorage.getItem('ny_links') || '[]');
+            links.splice(index, 1);
+            localStorage.setItem('ny_links', JSON.stringify(links));
+            loadLinks();
+        }
+
+        // --- Init ---
+        // Generate Snowflakes CSS
+        function createSnow() {
+            const snowContainer = document.getElementById('snow-container');
+            for (let i = 0; i < 50; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.style.left = Math.random() * 100 + '%';
+                flake.style.animationDelay = Math.random() * 10 + 's, ' + Math.random() * 3 + 's';
+                flake.innerHTML = '❄';
+                snowContainer.appendChild(flake);
+            }
+        }
+
+        window.onload = () => {
+            createSnow();
+            loadMemories();
+            loadLinks();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+
+</html>
