@@ -1,71 +1,241 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
- 
-
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
-    </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สรุปเกณฑ์การคัดเลือก TCAS รอบ 3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
         }
-      });
-    </script>
-  </body>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen py-10 px-4">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">
+                <i class="fas fa-university text-indigo-600 mr-2"></i> ตารางสรุปเกณฑ์ TCAS รอบ 3
+            </h1>
+            <p class="text-slate-500">รวมสัดส่วนคะแนน Admission ของมหาวิทยาลัยชั้นนำ</p>
+        </div>
+
+        <!-- Card Container -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+            
+            <!-- Table Wrapper for Mobile Scroll -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-indigo-600 text-white">
+                            <th class="p-4 md:p-5 text-sm md:text-base font-semibold tracking-wide border-r border-indigo-500 w-1/4 min-w-[200px]">
+                                มหาวิทยาลัย
+                            </th>
+                            <th class="p-4 md:p-5 text-sm md:text-base font-semibold tracking-wide w-3/4 min-w-[400px]">
+                                สัดส่วนคะแนนที่ใช้
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+
+                        <!-- Kasetsart University -->
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="p-4 md:p-6 align-top bg-slate-50 md:bg-white border-r border-slate-200">
+                                <div class="flex items-start gap-3">
+                                    <div class="bg-green-100 p-2 rounded-lg text-green-700 mt-1">
+                                        <i class="fas fa-leaf text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-lg text-slate-800">ม.เกษตรศาสตร์</div>
+                                        <div class="text-sm text-slate-500 mt-1">TCAS รอบ 3</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4 md:p-6">
+                                <div class="flex flex-wrap gap-3">
+                                    <div class="flex items-center bg-white border border-slate-200 rounded-lg p-3 shadow-sm flex-1 min-w-[140px]">
+                                        <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 font-bold text-sm">TGAT</div>
+                                        <div>
+                                            <div class="text-xs text-slate-500">ความถนัดทั่วไป</div>
+                                            <div class="font-bold text-blue-700 text-lg">45%</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center bg-white border border-slate-200 rounded-lg p-3 shadow-sm flex-1 min-w-[140px]">
+                                        <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mr-3 font-bold text-sm">TPAT3</div>
+                                        <div>
+                                            <div class="text-xs text-slate-500">วิทย์-เทคโนฯ</div>
+                                            <div class="font-bold text-orange-700 text-lg">55%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Thammasat University (Regular) -->
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="p-4 md:p-6 align-top bg-slate-50 md:bg-white border-r border-slate-200">
+                                <div class="flex items-start gap-3">
+                                    <div class="bg-red-100 p-2 rounded-lg text-red-700 mt-1">
+                                        <i class="fas fa-balance-scale text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-lg text-slate-800">ม.ธรรมศาสตร์</div>
+                                        <div class="inline-block bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full mt-1 font-medium">ภาคปกติ</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4 md:p-6">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    <div class="score-card border-l-4 border-indigo-500 pl-3 py-1">
+                                        <span class="block text-xs text-slate-500">A-Level คณิต 1</span>
+                                        <span class="font-bold text-indigo-700 text-lg">50%</span>
+                                    </div>
+                                    <div class="score-card border-l-4 border-blue-400 pl-3 py-1">
+                                        <span class="block text-xs text-slate-500">TGAT1 (Eng)</span>
+                                        <span class="font-bold text-slate-700">15%</span>
+                                    </div>
+                                    <div class="score-card border-l-4 border-blue-400 pl-3 py-1">
+                                        <span class="block text-xs text-slate-500">TGAT2 (เหตุผล)</span>
+                                        <span class="font-bold text-slate-700">15%</span>
+                                    </div>
+                                    <div class="score-card border-l-4 border-orange-400 pl-3 py-1">
+                                        <span class="block text-xs text-slate-500">TPAT3 (วิทย์)</span>
+                                        <span class="font-bold text-slate-700">15%</span>
+                                    </div>
+                                    <div class="score-card border-l-4 border-blue-400 pl-3 py-1">
+                                        <span class="block text-xs text-slate-500">TGAT3 (ทำงาน)</span>
+                                        <span class="font-bold text-slate-700">5%</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                         <!-- Thammasat University (Special) -->
+                         <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="p-4 md:p-6 align-top bg-slate-50 md:bg-white border-r border-slate-200">
+                                <div class="flex items-start gap-3">
+                                    <div class="bg-red-100 p-2 rounded-lg text-red-700 mt-1">
+                                        <i class="fas fa-balance-scale text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-lg text-slate-800">ม.ธรรมศาสตร์</div>
+                                        <div class="inline-block bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded-full mt-1 font-medium">ภาคพิเศษ</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4 md:p-6">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 opacity-90">
+                                     <!-- Same content structure as regular, showing consistency -->
+                                     <div class="score-card border-l-4 border-indigo-500 pl-3 py-1">
+                                        <span class="block text-xs text-slate-500">A-Level คณิต 1</span>
+                                        <span class="font-bold text-indigo-700 text-lg">50%</span>
+                                    </div>
+                                    <div class="score-card border-l-4 border-blue-400 pl-3 py-1">
+                                        <span class="block text-xs text-slate-500">TGAT1 (Eng)</span>
+                                        <span class="font-bold text-slate-700">15%</span>
+                                    </div>
+                                    <div class="score-card border-l-4 border-blue-400 pl-3 py-1">
+                                        <span class="block text-xs text-slate-500">TGAT2 (เหตุผล)</span>
+                                        <span class="font-bold text-slate-700">15%</span>
+                                    </div>
+                                    <div class="score-card border-l-4 border-orange-400 pl-3 py-1">
+                                        <span class="block text-xs text-slate-500">TPAT3 (วิทย์)</span>
+                                        <span class="font-bold text-slate-700">15%</span>
+                                    </div>
+                                    <div class="score-card border-l-4 border-blue-400 pl-3 py-1">
+                                        <span class="block text-xs text-slate-500">TGAT3 (ทำงาน)</span>
+                                        <span class="font-bold text-slate-700">5%</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- KMUTNB -->
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="p-4 md:p-6 align-top bg-slate-50 md:bg-white border-r border-slate-200">
+                                <div class="flex items-start gap-3">
+                                    <div class="bg-orange-100 p-2 rounded-lg text-orange-700 mt-1">
+                                        <i class="fas fa-cogs text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-lg text-slate-800">มจพ.</div>
+                                        <div class="text-sm text-slate-500 mt-1">พระจอมเกล้าพระนครเหนือ</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4 md:p-6">
+                                <div class="flex flex-wrap gap-3">
+                                    <div class="flex items-center bg-white border border-slate-200 rounded-lg p-3 shadow-sm flex-1 min-w-[140px]">
+                                        <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 font-bold text-sm">TGAT</div>
+                                        <div>
+                                            <div class="text-xs text-slate-500">ความถนัดทั่วไป</div>
+                                            <div class="font-bold text-blue-700 text-lg">40%</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center bg-white border border-slate-200 rounded-lg p-3 shadow-sm flex-1 min-w-[140px]">
+                                        <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mr-3 font-bold text-sm">TPAT3</div>
+                                        <div>
+                                            <div class="text-xs text-slate-500">วิทย์-เทคโนฯ</div>
+                                            <div class="font-bold text-orange-700 text-lg">60%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- KMITL -->
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="p-4 md:p-6 align-top bg-slate-50 md:bg-white border-r border-slate-200">
+                                <div class="flex items-start gap-3">
+                                    <div class="bg-orange-100 p-2 rounded-lg text-orange-700 mt-1">
+                                        <i class="fas fa-train text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-lg text-slate-800">สจล.</div>
+                                        <div class="text-sm text-slate-500 mt-1">ลาดกระบัง</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4 md:p-6">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                    <div class="relative bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
+                                        <div class="text-xs text-slate-500 mb-1">A-Level คณิต 1</div>
+                                        <div class="text-xl font-bold text-indigo-600">50%</div>
+                                    </div>
+                                    <div class="relative bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
+                                        <div class="text-xs text-slate-500 mb-1">TGAT2 (เหตุผล)</div>
+                                        <div class="text-xl font-bold text-blue-600">20%</div>
+                                    </div>
+                                    <div class="relative bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
+                                        <div class="text-xs text-slate-500 mb-1">TPAT3 (วิทย์)</div>
+                                        <div class="text-xl font-bold text-orange-600">15%</div>
+                                    </div>
+                                    <div class="relative bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
+                                        <div class="text-xs text-slate-500 mb-1">A-Level Eng</div>
+                                        <div class="text-xl font-bold text-teal-600">15%</div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Footer -->
+            <div class="bg-slate-50 p-4 text-center border-t border-slate-200 text-sm text-slate-500">
+                * ข้อมูลนี้เป็นการสรุปเบื้องต้น โปรดตรวจสอบประกาศอย่างเป็นทางการจากมหาวิทยาลัยอีกครั้ง
+            </div>
+        </div>
+    </div>
+
+</body>
 </html>
