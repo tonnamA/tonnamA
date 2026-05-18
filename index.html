@@ -1,241 +1,1080 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สรุปเกณฑ์การคัดเลือก TCAS รอบ 3</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Prompt', sans-serif;
+import React, { useState, useEffect } from 'react';
+
+// Mock database representing PriceCharting / Card Market search results
+const MOCK_PRICE_CHARTING_DATABASE = [
+  { id: 'p1', name: 'Charizard VMAX (Shiny Vault SV107)', set: 'Shining Fates', price: 2800 },
+  { id: 'p2', name: 'Pikachu Illustrator', set: 'Promo', price: 15000000 },
+  { id: 'p3', name: 'Blue-Eyes White Dragon (LOB-001)', set: 'Legend of Blue Eyes', price: 18500 },
+  { id: 'p4', name: 'Dark Magician Girl (MFC-000)', set: 'Magicians Force', price: 9200 },
+  { id: 'p5', name: 'Black Lustre Soldier (Sy2-001)', set: 'Yugi Deck 2', price: 450 },
+  { id: 'p6', name: 'Lillie (Ultra Rare 147/149)', set: 'Sun & Moon Base', price: 12000 },
+  { id: 'p7', name: 'Umbreon VMAX (Alternate Art Secret 215)', set: 'Evolving Skies', price: 29500 },
+  { id: 'p8', name: 'Black Lotus (Beta)', set: 'Limited Edition Beta', price: 850000 },
+  { id: 'p9', name: 'Mewtwo Gold Star (101/113)', set: 'Delta Species', price: 22000 },
+  { id: 'p10', name: 'Kamado (Rainbow Rare 085/067)', set: 'Space Juggler', price: 350 },
+  { id: 'p11', name: 'Acerola (142/150)', set: 'S&M Ultra Shiny', price: 18000 },
+  { id: 'p12', name: 'Ash Greninja EX (XY133)', set: 'XY Promos', price: 1200 }
+];
+
+const GAS_URL = "https://script.google.com/macros/s/AKfycbz2zaGx_zdjPjpo7Tfyz3M7x-15XzcCRmeZyIJ2Q6XxTYoOGaAwpJI4xUK9iz5FJTDW/exec";
+
+export default function App() {
+  // Tab State: 'single' | 'bulk' | 'search' | 'dashboard'
+  const [activeTab, setActiveTab] = useState('single');
+
+  // --- AUTH STATE ---
+  const [currentUser, setCurrentUser] = useState(null);
+  const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
+  const [authForm, setAuthForm] = useState({ username: '', password: '' });
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
+
+  // Sales Records for Dashboard
+  const [salesRecords, setSalesRecordsState] = useState([]);
+
+  // Wrapper function to update state and sync to Google Sheet simultaneously
+  const setSalesRecords = (newRecords) => {
+    setSalesRecordsState(newRecords);
+    if (currentUser) {
+       // Sync to Google Sheet silently
+       fetch(GAS_URL, {
+         method: 'POST',
+         headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Prevent CORS preflight
+         body: JSON.stringify({ action: 'sync', username: currentUser, records: newRecords })
+       }).catch(err => console.error("Sync error:", err));
+    }
+  };
+
+  // Toast Notification State
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: '', type: 'success' });
+    }, 3000);
+  };
+
+  // --- SINGLE CALCULATOR STATE ---
+  const [singleCard, setSingleCard] = useState({
+    name: '',
+    costPrice: '',
+    targetProfit: '',
+    shippingCharged: 50,
+    shippingActual: 38
+  });
+
+  // --- BULK CALCULATOR STATE ---
+  const [bulkGroupName, setBulkGroupName] = useState('');
+  const [bulkCards, setBulkCards] = useState([
+    { id: '1', name: '', costPrice: '' }
+  ]);
+  const [bulkTargetProfit, setBulkTargetProfit] = useState('');
+  const [bulkShippingCharged, setBulkShippingCharged] = useState(50);
+  const [bulkShippingActual, setBulkShippingActual] = useState(38);
+
+  // --- SEARCH STATE ---
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // --- AUTH ACTIONS ---
+  const handleAuth = async (e) => {
+    e.preventDefault();
+    if (!authForm.username || !authForm.password) {
+      showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+      return;
+    }
+    setIsAuthLoading(true);
+    try {
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: authMode,
+          username: authForm.username,
+          password: authForm.password
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (authMode === 'login') {
+          setCurrentUser(authForm.username);
+          setSalesRecordsState(data.records || []); // Load history from sheet
+          showToast(`ยินดีต้อนรับ ${authForm.username}! โหลดข้อมูลเรียบร้อย`, 'success');
+        } else {
+          showToast('สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ', 'success');
+          setAuthMode('login');
+          setAuthForm({ ...authForm, password: '' });
         }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-        }
-    </style>
-</head>
-<body class="bg-slate-100 text-slate-800 min-h-screen py-10 px-4">
+      } else {
+        showToast(data.message || 'เกิดข้อผิดพลาด', 'error');
+      }
+    } catch (err) {
+      showToast('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ Google Apps Script ได้', 'error');
+    }
+    setIsAuthLoading(false);
+  };
 
-    <div class="max-w-5xl mx-auto">
-        <!-- Header -->
-        <div class="text-center mb-10">
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">
-                <i class="fas fa-university text-indigo-600 mr-2"></i> ตารางสรุปเกณฑ์ TCAS รอบ 3
-            </h1>
-            <p class="text-slate-500">รวมสัดส่วนคะแนน Admission ของมหาวิทยาลัยชั้นนำ</p>
-        </div>
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setSalesRecordsState([]);
+    setAuthForm({ username: '', password: '' });
+    showToast('ออกจากระบบเรียบร้อย', 'info');
+  };
 
-        <!-- Card Container -->
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
-            
-            <!-- Table Wrapper for Mobile Scroll -->
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-indigo-600 text-white">
-                            <th class="p-4 md:p-5 text-sm md:text-base font-semibold tracking-wide border-r border-indigo-500 w-1/4 min-w-[200px]">
-                                มหาวิทยาลัย
-                            </th>
-                            <th class="p-4 md:p-5 text-sm md:text-base font-semibold tracking-wide w-3/4 min-w-[400px]">
-                                สัดส่วนคะแนนที่ใช้
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-200">
+  // --- CALCULATE SINGLE VALUES ---
+  const calcSingle = () => {
+    const cost = parseFloat(singleCard.costPrice) || 0;
+    const profit = parseFloat(singleCard.targetProfit) || 0;
+    const shipCharged = parseFloat(singleCard.shippingCharged) || 0;
+    const shipActual = parseFloat(singleCard.shippingActual) || 0;
 
-                        <!-- Kasetsart University -->
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="p-4 md:p-6 align-top bg-slate-50 md:bg-white border-r border-slate-200">
-                                <div class="flex items-start gap-3">
-                                    <div class="bg-green-100 p-2 rounded-lg text-green-700 mt-1">
-                                        <i class="fas fa-leaf text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-lg text-slate-800">ม.เกษตรศาสตร์</div>
-                                        <div class="text-sm text-slate-500 mt-1">TCAS รอบ 3</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="p-4 md:p-6">
-                                <div class="flex flex-wrap gap-3">
-                                    <div class="flex items-center bg-white border border-slate-200 rounded-lg p-3 shadow-sm flex-1 min-w-[140px]">
-                                        <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 font-bold text-sm">TGAT</div>
-                                        <div>
-                                            <div class="text-xs text-slate-500">ความถนัดทั่วไป</div>
-                                            <div class="font-bold text-blue-700 text-lg">45%</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center bg-white border border-slate-200 rounded-lg p-3 shadow-sm flex-1 min-w-[140px]">
-                                        <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mr-3 font-bold text-sm">TPAT3</div>
-                                        <div>
-                                            <div class="text-xs text-slate-500">วิทย์-เทคโนฯ</div>
-                                            <div class="font-bold text-orange-700 text-lg">55%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
+    // ส่วนต่างค่าส่งที่จะเป็นกำไร/ขาดทุนเพิ่ม (50 - 38 = 12 บาท)
+    const shippingProfit = shipCharged - shipActual; 
+    
+    // ราคาขายที่ต้องตั้ง (ราคาทุน + กำไรที่ต้องการ) + ค่าส่งที่เก็บลูกค้า 50 บาท
+    // แต่ตัวเนื้อกำไรสุทธิจริงๆ จะรวมส่วนต่างค่าส่งด้วย
+    const priceToSet = cost + profit + shipCharged; 
+    const netProfit = profit + shippingProfit;
 
-                        <!-- Thammasat University (Regular) -->
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="p-4 md:p-6 align-top bg-slate-50 md:bg-white border-r border-slate-200">
-                                <div class="flex items-start gap-3">
-                                    <div class="bg-red-100 p-2 rounded-lg text-red-700 mt-1">
-                                        <i class="fas fa-balance-scale text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-lg text-slate-800">ม.ธรรมศาสตร์</div>
-                                        <div class="inline-block bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full mt-1 font-medium">ภาคปกติ</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="p-4 md:p-6">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                    <div class="score-card border-l-4 border-indigo-500 pl-3 py-1">
-                                        <span class="block text-xs text-slate-500">A-Level คณิต 1</span>
-                                        <span class="font-bold text-indigo-700 text-lg">50%</span>
-                                    </div>
-                                    <div class="score-card border-l-4 border-blue-400 pl-3 py-1">
-                                        <span class="block text-xs text-slate-500">TGAT1 (Eng)</span>
-                                        <span class="font-bold text-slate-700">15%</span>
-                                    </div>
-                                    <div class="score-card border-l-4 border-blue-400 pl-3 py-1">
-                                        <span class="block text-xs text-slate-500">TGAT2 (เหตุผล)</span>
-                                        <span class="font-bold text-slate-700">15%</span>
-                                    </div>
-                                    <div class="score-card border-l-4 border-orange-400 pl-3 py-1">
-                                        <span class="block text-xs text-slate-500">TPAT3 (วิทย์)</span>
-                                        <span class="font-bold text-slate-700">15%</span>
-                                    </div>
-                                    <div class="score-card border-l-4 border-blue-400 pl-3 py-1">
-                                        <span class="block text-xs text-slate-500">TGAT3 (ทำงาน)</span>
-                                        <span class="font-bold text-slate-700">5%</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
+    return {
+      priceToSet,
+      netProfit,
+      shippingProfit,
+      costTotal: cost + shipActual
+    };
+  };
 
-                         <!-- Thammasat University (Special) -->
-                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="p-4 md:p-6 align-top bg-slate-50 md:bg-white border-r border-slate-200">
-                                <div class="flex items-start gap-3">
-                                    <div class="bg-red-100 p-2 rounded-lg text-red-700 mt-1">
-                                        <i class="fas fa-balance-scale text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-lg text-slate-800">ม.ธรรมศาสตร์</div>
-                                        <div class="inline-block bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded-full mt-1 font-medium">ภาคพิเศษ</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="p-4 md:p-6">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 opacity-90">
-                                     <!-- Same content structure as regular, showing consistency -->
-                                     <div class="score-card border-l-4 border-indigo-500 pl-3 py-1">
-                                        <span class="block text-xs text-slate-500">A-Level คณิต 1</span>
-                                        <span class="font-bold text-indigo-700 text-lg">50%</span>
-                                    </div>
-                                    <div class="score-card border-l-4 border-blue-400 pl-3 py-1">
-                                        <span class="block text-xs text-slate-500">TGAT1 (Eng)</span>
-                                        <span class="font-bold text-slate-700">15%</span>
-                                    </div>
-                                    <div class="score-card border-l-4 border-blue-400 pl-3 py-1">
-                                        <span class="block text-xs text-slate-500">TGAT2 (เหตุผล)</span>
-                                        <span class="font-bold text-slate-700">15%</span>
-                                    </div>
-                                    <div class="score-card border-l-4 border-orange-400 pl-3 py-1">
-                                        <span class="block text-xs text-slate-500">TPAT3 (วิทย์)</span>
-                                        <span class="font-bold text-slate-700">15%</span>
-                                    </div>
-                                    <div class="score-card border-l-4 border-blue-400 pl-3 py-1">
-                                        <span class="block text-xs text-slate-500">TGAT3 (ทำงาน)</span>
-                                        <span class="font-bold text-slate-700">5%</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
+  // --- CALCULATE BULK VALUES ---
+  const calcBulk = () => {
+    const totalCost = bulkCards.reduce((sum, card) => sum + (parseFloat(card.costPrice) || 0), 0);
+    const profit = parseFloat(bulkTargetProfit) || 0;
+    const shipCharged = parseFloat(bulkShippingCharged) || 0;
+    const shipActual = parseFloat(bulkShippingActual) || 0;
 
-                        <!-- KMUTNB -->
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="p-4 md:p-6 align-top bg-slate-50 md:bg-white border-r border-slate-200">
-                                <div class="flex items-start gap-3">
-                                    <div class="bg-orange-100 p-2 rounded-lg text-orange-700 mt-1">
-                                        <i class="fas fa-cogs text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-lg text-slate-800">มจพ.</div>
-                                        <div class="text-sm text-slate-500 mt-1">พระจอมเกล้าพระนครเหนือ</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="p-4 md:p-6">
-                                <div class="flex flex-wrap gap-3">
-                                    <div class="flex items-center bg-white border border-slate-200 rounded-lg p-3 shadow-sm flex-1 min-w-[140px]">
-                                        <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 font-bold text-sm">TGAT</div>
-                                        <div>
-                                            <div class="text-xs text-slate-500">ความถนัดทั่วไป</div>
-                                            <div class="font-bold text-blue-700 text-lg">40%</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center bg-white border border-slate-200 rounded-lg p-3 shadow-sm flex-1 min-w-[140px]">
-                                        <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mr-3 font-bold text-sm">TPAT3</div>
-                                        <div>
-                                            <div class="text-xs text-slate-500">วิทย์-เทคโนฯ</div>
-                                            <div class="font-bold text-orange-700 text-lg">60%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
+    const shippingProfit = shipCharged - shipActual;
+    const priceToSet = totalCost + profit + shipCharged;
+    const netProfit = profit + shippingProfit;
 
-                        <!-- KMITL -->
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="p-4 md:p-6 align-top bg-slate-50 md:bg-white border-r border-slate-200">
-                                <div class="flex items-start gap-3">
-                                    <div class="bg-orange-100 p-2 rounded-lg text-orange-700 mt-1">
-                                        <i class="fas fa-train text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-lg text-slate-800">สจล.</div>
-                                        <div class="text-sm text-slate-500 mt-1">ลาดกระบัง</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="p-4 md:p-6">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                                    <div class="relative bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
-                                        <div class="text-xs text-slate-500 mb-1">A-Level คณิต 1</div>
-                                        <div class="text-xl font-bold text-indigo-600">50%</div>
-                                    </div>
-                                    <div class="relative bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
-                                        <div class="text-xs text-slate-500 mb-1">TGAT2 (เหตุผล)</div>
-                                        <div class="text-xl font-bold text-blue-600">20%</div>
-                                    </div>
-                                    <div class="relative bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
-                                        <div class="text-xs text-slate-500 mb-1">TPAT3 (วิทย์)</div>
-                                        <div class="text-xl font-bold text-orange-600">15%</div>
-                                    </div>
-                                    <div class="relative bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
-                                        <div class="text-xs text-slate-500 mb-1">A-Level Eng</div>
-                                        <div class="text-xl font-bold text-teal-600">15%</div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
+    return {
+      totalCost,
+      priceToSet,
+      netProfit,
+      shippingProfit,
+      costTotal: totalCost + shipActual
+    };
+  };
 
-                    </tbody>
-                </table>
+  // --- SINGLE ACTIONS ---
+  const handleAddSingleToRecords = () => {
+    if (!singleCard.name || !singleCard.costPrice) {
+      showToast('กรุณากรอกชื่อการ์ดและราคาทุน', 'error');
+      return;
+    }
+    const calcs = calcSingle();
+    const newRecord = {
+      id: 'r_' + Date.now(),
+      name: singleCard.name,
+      cost: parseFloat(singleCard.costPrice) || 0,
+      targetProfit: parseFloat(singleCard.targetProfit) || 0,
+      shippingCharged: parseFloat(singleCard.shippingCharged) || 0,
+      shippingActual: parseFloat(singleCard.shippingActual) || 0,
+      priceSold: calcs.priceToSet,
+      actualProfit: calcs.netProfit,
+      type: 'เดี่ยว',
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    setSalesRecords([newRecord, ...salesRecords]);
+    showToast('บันทึกข้อมูลการ์ดเดี่ยวลง Dashboard สำเร็จ!');
+    setSingleCard({
+      name: '',
+      costPrice: '',
+      targetProfit: '',
+      shippingCharged: 50,
+      shippingActual: 38
+    });
+  };
+
+  // --- BULK ACTIONS ---
+  const handleAddBulkField = () => {
+    setBulkCards([...bulkCards, { id: Date.now().toString(), name: '', costPrice: '' }]);
+  };
+
+  const handleRemoveBulkField = (id) => {
+    if (bulkCards.length === 1) return;
+    setBulkCards(bulkCards.filter(c => c.id !== id));
+  };
+
+  const handleBulkCardChange = (id, field, value) => {
+    setBulkCards(bulkCards.map(c => c.id === id ? { ...c, [field]: value } : c));
+  };
+
+  const handleAddBulkToRecords = () => {
+    const validCards = bulkCards.filter(c => c.name && c.costPrice);
+    if (validCards.length === 0) {
+      showToast('กรุณากรอกข้อมูลการ์ดอย่างน้อย 1 ใบให้ครบถ้วน', 'error');
+      return;
+    }
+    const groupName = bulkGroupName.trim() || `กลุ่มการ์ด (${validCards.length} ใบ)`;
+    const calcs = calcBulk();
+    
+    const newRecord = {
+      id: 'r_' + Date.now(),
+      name: groupName,
+      cost: calcs.totalCost,
+      targetProfit: parseFloat(bulkTargetProfit) || 0,
+      shippingCharged: parseFloat(bulkShippingCharged) || 0,
+      shippingActual: parseFloat(bulkShippingActual) || 0,
+      priceSold: calcs.priceToSet,
+      actualProfit: calcs.netProfit,
+      type: 'กลุ่ม',
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    setSalesRecords([newRecord, ...salesRecords]);
+    showToast('บันทึกข้อมูลแบบกลุ่มลง Dashboard สำเร็จ!');
+    setBulkGroupName('');
+    setBulkCards([{ id: Date.now().toString(), name: '', costPrice: '' }]);
+    setBulkTargetProfit('');
+  };
+
+  // --- SEARCH ACTIONS ---
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    setIsSearching(true);
+
+    // Simulate Network Latency
+    setTimeout(() => {
+      const query = searchQuery.toLowerCase();
+      const filtered = MOCK_PRICE_CHARTING_DATABASE.filter(
+        item => item.name.toLowerCase().includes(query) || item.set.toLowerCase().includes(query)
+      );
+      setSearchResults(filtered);
+      setIsSearching(false);
+      setHasSearched(true);
+    }, 600);
+  };
+
+  const handleApplyToSingle = (card) => {
+    setSingleCard({
+      name: card.name,
+      costPrice: Math.round(card.price * 0.7), // สมมติว่าต้นทุนเฉลี่ยคือ 70% ของราคาอ้างอิงตลาด
+      targetProfit: Math.round(card.price * 0.2), // ตั้งเป้ากำไร 20%
+      shippingCharged: 50,
+      shippingActual: 38
+    });
+    setActiveTab('single');
+    showToast(`ดึงข้อมูลการ์ด ${card.name} เข้าเครื่องคำนวณเดี่ยวแล้ว!`);
+  };
+
+  const handleApplyToBulk = (card) => {
+    // หาช่องว่างหรือสร้างขึ้นใหม่
+    const updated = [...bulkCards];
+    const emptyIndex = updated.findIndex(c => !c.name && !c.costPrice);
+    const cardData = { name: card.name, costPrice: Math.round(card.price * 0.7).toString() };
+
+    if (emptyIndex !== -1) {
+      updated[emptyIndex] = { ...updated[emptyIndex], ...cardData };
+    } else {
+      updated.push({ id: Date.now().toString(), ...cardData });
+    }
+    
+    setBulkCards(updated);
+    setActiveTab('bulk');
+    showToast(`ดึงข้อมูลการ์ด ${card.name} เข้าแบบกลุ่มแล้ว!`);
+  };
+
+  // --- DELETE RECORD ---
+  const handleDeleteRecord = (id) => {
+    setSalesRecords(salesRecords.filter(r => r.id !== id));
+    showToast('ลบรายการเรียบร้อยแล้ว', 'info');
+  };
+
+  // --- DASHBOARD CALCULATIONS ---
+  const totalCostAll = salesRecords.reduce((sum, r) => sum + r.cost, 0);
+  const totalProfitAll = salesRecords.reduce((sum, r) => sum + r.actualProfit, 0);
+  const totalRevenueAll = salesRecords.reduce((sum, r) => sum + r.priceSold, 0);
+  
+  // Calculate shipping margins (diff between charged and actual)
+  const totalShippingProfit = salesRecords.reduce((sum, r) => sum + (r.shippingCharged - r.shippingActual), 0);
+
+  // Graph Calculations for custom SVG
+  const maxValForGraph = Math.max(...salesRecords.map(r => r.priceSold), 1000);
+
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-slate-100 font-sans antialiased flex items-center justify-center p-4">
+        {toast.show && (
+          <div className="fixed top-5 right-5 z-50 animate-bounce">
+            <div className={`px-4 py-3 rounded-lg shadow-2xl flex items-center space-x-2 border ${
+              toast.type === 'error' ? 'bg-red-500 border-red-400 text-white' : 
+              toast.type === 'info' ? 'bg-blue-600 border-blue-400 text-white' :
+              'bg-emerald-500 border-emerald-400 text-white'
+            }`}>
+              <span>{toast.type === 'error' ? '❌' : toast.type === 'info' ? 'ℹ️' : '✅'}</span>
+              <span className="font-semibold">{toast.message}</span>
+            </div>
+          </div>
+        )}
+        
+        <div className="max-w-md w-full bg-slate-800 rounded-3xl border border-slate-700 p-8 shadow-2xl">
+          <div className="text-center mb-8">
+            <div className="inline-flex p-3 bg-indigo-500/10 rounded-2xl mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-yellow-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-extrabold text-white">TCG Profit Planner</h1>
+            <p className="text-sm text-slate-400 mt-2">เข้าสู่ระบบเพื่อซิงค์ข้อมูลกับ Google Sheets</p>
+          </div>
+
+          <form onSubmit={handleAuth} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-1.5">ชื่อผู้ใช้ (Username)</label>
+              <input 
+                type="text"
+                required
+                value={authForm.username}
+                onChange={(e) => setAuthForm({...authForm, username: e.target.value})}
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-1.5">รหัสผ่าน (Password)</label>
+              <input 
+                type="password"
+                required
+                value={authForm.password}
+                onChange={(e) => setAuthForm({...authForm, password: e.target.value})}
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+              />
             </div>
             
-            <!-- Footer -->
-            <div class="bg-slate-50 p-4 text-center border-t border-slate-200 text-sm text-slate-500">
-                * ข้อมูลนี้เป็นการสรุปเบื้องต้น โปรดตรวจสอบประกาศอย่างเป็นทางการจากมหาวิทยาลัยอีกครั้ง
-            </div>
+            <button 
+              type="submit" 
+              disabled={isAuthLoading}
+              className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3.5 rounded-xl transition duration-150 shadow-lg flex items-center justify-center gap-2 mt-4 disabled:opacity-50"
+            >
+              {isAuthLoading ? <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span> : (authMode === 'login' ? 'เข้าสู่ระบบ' : 'สมัครสมาชิก')}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center text-sm text-slate-400">
+            {authMode === 'login' ? (
+              <p>ยังไม่มีบัญชี? <button type="button" onClick={() => setAuthMode('register')} className="text-indigo-400 hover:text-indigo-300 font-semibold underline">สมัครสมาชิก</button></p>
+            ) : (
+              <p>มีบัญชีแล้ว? <button type="button" onClick={() => setAuthMode('login')} className="text-indigo-400 hover:text-indigo-300 font-semibold underline">เข้าสู่ระบบ</button></p>
+            )}
+          </div>
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans antialiased pb-12">
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className="fixed top-5 right-5 z-50 animate-bounce">
+          <div className={`px-4 py-3 rounded-lg shadow-2xl flex items-center space-x-2 border ${
+            toast.type === 'error' ? 'bg-red-500 border-red-400 text-white' : 
+            toast.type === 'info' ? 'bg-blue-600 border-blue-400 text-white' :
+            'bg-emerald-500 border-emerald-400 text-white'
+          }`}>
+            <span>{toast.type === 'error' ? '❌' : toast.type === 'info' ? 'ℹ️' : '✅'}</span>
+            <span className="font-semibold">{toast.message}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Header Banner */}
+      <header className="bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 shadow-xl py-6 px-4">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center space-x-3">
+            <div className="p-3 bg-white/10 rounded-xl backdrop-blur-md">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-yellow-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
+                TCG Profit Planner <span className="text-xs bg-yellow-400 text-slate-950 font-bold px-2 py-0.5 rounded-full uppercase">Pro</span>
+              </h1>
+              <p className="text-sm text-indigo-100">คำนวณต้นทุน กำไร และส่วนต่างค่าจัดส่งสำหรับการ์ดระดับมืออาชีพ</p>
+            </div>
+          </div>
+          <div className="text-right flex flex-col items-end gap-2">
+            <div className="text-xs text-indigo-200">
+              สถานะ: <span className="text-emerald-400 font-bold">● เชื่อมต่อ Sheets แล้ว</span>
+            </div>
+            <div className="flex items-center gap-3 bg-slate-900/40 py-1.5 px-3 rounded-full border border-slate-700/50">
+              <span className="text-sm text-slate-200 font-medium">👤 {currentUser}</span>
+              <div className="w-px h-4 bg-slate-600"></div>
+              <button onClick={handleLogout} className="text-xs text-rose-400 hover:text-rose-300 font-semibold transition-colors">
+                ออกจากระบบ
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Container */}
+      <main className="max-w-7xl mx-auto px-4 mt-8">
+        
+        {/* Navigation Tabs */}
+        <div className="flex flex-wrap gap-2 mb-8 bg-slate-800 p-1.5 rounded-xl border border-slate-700">
+          <button 
+            onClick={() => setActiveTab('single')}
+            className={`flex-1 min-w-[130px] flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-all duration-200 ${
+              activeTab === 'single' 
+                ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg' 
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
+            }`}
+          >
+            <span>👤</span>
+            <span>แบบเดี่ยว</span>
+          </button>
+          
+          <button 
+            onClick={() => setActiveTab('bulk')}
+            className={`flex-1 min-w-[130px] flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-all duration-200 ${
+              activeTab === 'bulk' 
+                ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg' 
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
+            }`}
+          >
+            <span>👥</span>
+            <span>แบบกลุ่ม / ชุด</span>
+          </button>
+
+          <button 
+            onClick={() => setActiveTab('search')}
+            className={`flex-1 min-w-[150px] flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-all duration-200 ${
+              activeTab === 'search' 
+                ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg' 
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
+            }`}
+          >
+            <span>🔍</span>
+            <span className="flex items-center gap-1.5">ค้นหาราคา PriceCharting</span>
+          </button>
+
+          <button 
+            onClick={() => setActiveTab('dashboard')}
+            className={`flex-1 min-w-[130px] flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-all duration-200 ${
+              activeTab === 'dashboard' 
+                ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg' 
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
+            }`}
+          >
+            <span>📈</span>
+            <span>Dashboard เปรียบเทียบ</span>
+          </button>
+        </div>
+
+        {/* Content Area */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Main Workspace Left Side (8 Cols) */}
+          <div className="lg:col-span-8 space-y-6">
+            
+            {/* TAB: SINGLE CALCULATOR */}
+            {activeTab === 'single' && (
+              <div className="bg-slate-800 rounded-2xl border border-slate-700 p-6 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+                    <span className="p-1.5 bg-indigo-500/10 rounded text-indigo-400">⚡</span>
+                    คำนวณกำไรการ์ดเดี่ยว
+                  </h2>
+                  <span className="text-xs bg-slate-700 text-indigo-300 font-semibold px-2.5 py-1 rounded-full">
+                    บวกราคาจัดส่งคงตัว
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Inputs */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-400 mb-1.5">ชื่อการ์ด (เช่น Charizard VMAX)</label>
+                      <input 
+                        type="text"
+                        placeholder="กรอกชื่อการ์ด..."
+                        value={singleCard.name}
+                        onChange={(e) => setSingleCard({ ...singleCard, name: e.target.value })}
+                        className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-400 mb-1.5">ราคาทุนการ์ด (บาท)</label>
+                      <input 
+                        type="number"
+                        placeholder="เช่น 2100"
+                        value={singleCard.costPrice}
+                        onChange={(e) => setSingleCard({ ...singleCard, costPrice: e.target.value })}
+                        className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-400 mb-1.5">กำไรขั้นต่ำที่ต้องการจากใบนี้ (บาท)</label>
+                      <input 
+                        type="number"
+                        placeholder="เช่น 500"
+                        value={singleCard.targetProfit}
+                        onChange={(e) => setSingleCard({ ...singleCard, targetProfit: e.target.value })}
+                        className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                      />
+                    </div>
+
+                    {/* Shipping fixed display */}
+                    <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-700/50 space-y-2">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-slate-400">ค่าจัดส่งเรียกเก็บลูกค้า:</span>
+                        <span className="text-white font-bold">{singleCard.shippingCharged} บาท</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-slate-400">ค่าจัดส่งจริงเฉลี่ย:</span>
+                        <span className="text-amber-400 font-semibold">{singleCard.shippingActual} บาท</span>
+                      </div>
+                      <div className="pt-2 border-t border-slate-700/50 flex justify-between items-center text-xs text-emerald-400">
+                        <span>กำไรส่วนต่างจากค่าส่ง:</span>
+                        <span>+{singleCard.shippingCharged - singleCard.shippingActual} บาท</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Calculations & Summary Live Preview */}
+                  <div className="bg-slate-900 rounded-2xl p-6 border border-slate-700 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-sm font-semibold tracking-wider text-slate-500 uppercase mb-4 text-center">ราคาขายและผลลัพธ์แนะนำ</h3>
+                      
+                      <div className="text-center mb-6">
+                        <p className="text-xs text-slate-400 mb-1">ราคาตั้งขายขั้นต่ำรวมค่าส่ง (บาท)</p>
+                        <p className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
+                          ฿{calcSingle().priceToSet.toLocaleString()}
+                        </p>
+                        <p className="text-xs text-indigo-300 mt-2">
+                          (ราคาสินค้า ฿{(calcSingle().priceToSet - singleCard.shippingCharged).toLocaleString()} + ค่าส่ง ฿{singleCard.shippingCharged})
+                        </p>
+                      </div>
+
+                      <div className="space-y-3.5 border-t border-slate-800 pt-4 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">ต้นทุนรวมทั้งหมด (รวมค่าส่งจริง):</span>
+                          <span className="text-slate-200 font-medium">฿{calcSingle().costTotal.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">กำไรสุทธิตั้งเป้า:</span>
+                          <span className="text-slate-200">฿{(parseFloat(singleCard.targetProfit) || 0).toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">กำไรเสริมจากค่าจัดส่ง:</span>
+                          <span className="text-emerald-400">+฿{calcSingle().shippingProfit.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between pt-3 border-t border-slate-800 text-base font-bold">
+                          <span className="text-slate-300">กำไรสุทธิที่จะได้รับจริง:</span>
+                          <span className="text-emerald-400">฿{calcSingle().netProfit.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6">
+                      <button 
+                        onClick={handleAddSingleToRecords}
+                        className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3.5 rounded-xl transition duration-150 shadow-lg flex items-center justify-center gap-2"
+                      >
+                        <span>📥</span>
+                        <span>บันทึกลงประวัติการขาย</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: BULK CALCULATOR */}
+            {activeTab === 'bulk' && (
+              <div className="bg-slate-800 rounded-2xl border border-slate-700 p-6 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-fuchsia-500 to-pink-500"></div>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+                    <span className="p-1.5 bg-fuchsia-500/10 rounded text-fuchsia-400">📦</span>
+                    คำนวณกำไรแบบกลุ่ม / เหมากอง
+                  </h2>
+                  <span className="text-xs bg-slate-700 text-fuchsia-300 font-semibold px-2.5 py-1 rounded-full">
+                    จัดกลุ่มการ์ด
+                  </span>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-400 mb-1.5">ชื่อกลุ่มสินค้า / ล็อตที่ขาย (ไม่ระบุจะมีระบบตั้งให้อัตโนมัติ)</label>
+                    <input 
+                      type="text"
+                      placeholder="เช่น เหมากองการ์ดโปเกมอน 10 ใบ, Box Starter Deck..."
+                      value={bulkGroupName}
+                      onChange={(e) => setBulkGroupName(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-fuchsia-500 transition-colors"
+                    />
+                  </div>
+
+                  {/* List of cards in the group */}
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-sm font-semibold text-slate-300">รายการการ์ดในกลุ่มนี้</h3>
+                      <button 
+                        onClick={handleAddBulkField}
+                        className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-lg transition"
+                      >
+                        + เพิ่มใบการ์ด
+                      </button>
+                    </div>
+
+                    <div className="max-h-60 overflow-y-auto space-y-2.5 pr-2 custom-scrollbar">
+                      {bulkCards.map((card, index) => (
+                        <div key={card.id} className="flex gap-2.5 items-center">
+                          <span className="text-xs font-semibold text-slate-500 w-6">#{index + 1}</span>
+                          <input 
+                            type="text"
+                            placeholder="ระบุชื่อหรือรายละเอียดการ์ด..."
+                            value={card.name}
+                            onChange={(e) => handleBulkCardChange(card.id, 'name', e.target.value)}
+                            className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-fuchsia-500 transition-colors"
+                          />
+                          <input 
+                            type="number"
+                            placeholder="ราคาทุน"
+                            value={card.costPrice}
+                            onChange={(e) => handleBulkCardChange(card.id, 'costPrice', e.target.value)}
+                            className="w-28 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-fuchsia-500 transition-colors"
+                          />
+                          <button 
+                            onClick={() => handleRemoveBulkField(card.id)}
+                            disabled={bulkCards.length === 1}
+                            className={`p-2.5 rounded-lg transition ${
+                              bulkCards.length === 1 
+                                ? 'text-slate-600 cursor-not-allowed' 
+                                : 'text-rose-400 hover:bg-rose-500/10 hover:text-rose-300'
+                            }`}
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Bottom section: Target profit & Summary */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-700">
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-400 mb-1.5">กำไรที่ต้องการจากกลุ่มนี้ (บาท)</label>
+                        <input 
+                          type="number"
+                          placeholder="เช่น 1200"
+                          value={bulkTargetProfit}
+                          onChange={(e) => setBulkTargetProfit(e.target.value)}
+                          className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-fuchsia-500 transition-colors"
+                        />
+                      </div>
+
+                      <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-700/50 space-y-2">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-slate-400">รวมจัดส่งเหมากลุ่ม (เก็บลูกค้า):</span>
+                          <span className="text-white font-bold">{bulkShippingCharged} บาท</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-slate-400">ส่งจริงเฉลี่ยกลุ่มนี้:</span>
+                          <span className="text-amber-400 font-semibold">{bulkShippingActual} บาท</span>
+                        </div>
+                        <div className="pt-2 border-t border-slate-700/50 flex justify-between items-center text-xs text-emerald-400">
+                          <span>กำไรส่วนต่างค่าส่ง:</span>
+                          <span>+{bulkShippingCharged - bulkShippingActual} บาท</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Result Card */}
+                    <div className="bg-slate-900 rounded-xl p-5 border border-slate-700 flex flex-col justify-between">
+                      <div>
+                        <div className="text-center mb-4">
+                          <p className="text-xs text-slate-400 mb-1">ราคาแนะนำยกกลุ่ม (บาท)</p>
+                          <p className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-pink-400">
+                            ฿{calcBulk().priceToSet.toLocaleString()}
+                          </p>
+                          <p className="text-[11px] text-fuchsia-300 mt-1">
+                            (รวมส่งแล้ว ฿{bulkShippingCharged} บาท)
+                          </p>
+                        </div>
+
+                        <div className="space-y-2 text-xs border-t border-slate-800 pt-3">
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">ต้นทุนสะสมของการ์ด:</span>
+                            <span className="text-slate-300 font-medium">฿{calcBulk().totalCost.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">ต้นทุนรวมค่าส่งจริง:</span>
+                            <span className="text-slate-300">฿{calcBulk().costTotal.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">กำไรสะสมเป้าหมาย:</span>
+                            <span className="text-slate-300">฿{(parseFloat(bulkTargetProfit) || 0).toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between pt-2 border-t border-slate-800 text-sm font-bold">
+                            <span className="text-slate-300">กำไรสุทธิกลุ่มนี้:</span>
+                            <span className="text-emerald-400">฿{calcBulk().netProfit.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button 
+                        onClick={handleAddBulkToRecords}
+                        className="w-full mt-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-2.5 rounded-lg transition duration-150 shadow-lg flex items-center justify-center gap-2 text-xs"
+                      >
+                        <span>📥</span>
+                        <span>บันทึกแบบกลุ่มลงประวัติ</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: SEARCH API PRICE CHARTING */}
+            {activeTab === 'search' && (
+              <div className="bg-slate-800 rounded-2xl border border-slate-700 p-6 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 to-yellow-500"></div>
+                
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+                    <span className="p-1.5 bg-amber-500/10 rounded text-amber-400">🔍</span>
+                    ค้นหาอ้างอิงราคา PriceCharting
+                  </h2>
+                  <span className="text-xs bg-amber-400 text-slate-900 font-extrabold px-2 py-0.5 rounded uppercase">
+                    Live Demo
+                  </span>
+                </div>
+                
+                <p className="text-sm text-slate-300 mb-6">
+                  ค้นหาราคาตลาดการ์ด TCG ล่าสุด (ฐานข้อมูล PriceCharting, Pokemon Card, Yu-Gi-Oh!) เพื่อดึงข้อมูลมาใช้วางแผนตั้งราคาขายที่เหมาะสม
+                </p>
+
+                {/* Search Bar */}
+                <form onSubmit={handleSearch} className="flex gap-2 mb-6">
+                  <div className="relative flex-1">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
+                    <input 
+                      type="text"
+                      placeholder="ลองพิมพ์ชื่อการ์ด เช่น Charizard, Pikachu, Blue-Eyes..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-4 py-3.5 text-slate-200 focus:outline-none focus:border-amber-500 transition-colors"
+                    />
+                  </div>
+                  <button 
+                    type="submit"
+                    className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-6 py-3.5 rounded-xl transition duration-150 flex items-center gap-1"
+                  >
+                    {isSearching ? (
+                      <span className="inline-block animate-spin h-4 w-4 border-2 border-slate-950 border-t-transparent rounded-full"></span>
+                    ) : 'ค้นหา'}
+                  </button>
+                </form>
+
+                {/* Search Results */}
+                {isSearching ? (
+                  <div className="text-center py-12">
+                    <div className="inline-block animate-spin h-8 w-8 border-4 border-amber-500 border-t-transparent rounded-full mb-3"></div>
+                    <p className="text-slate-400 text-sm">กำลังสืบค้นข้อมูลจาก PriceCharting API (จำลอง)...</p>
+                  </div>
+                ) : hasSearched ? (
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-400 mb-3">
+                      พบผลลัพธ์ทั้งหมด {searchResults.length} รายการ
+                    </h3>
+
+                    {searchResults.length === 0 ? (
+                      <div className="bg-slate-900/60 rounded-xl p-8 text-center border border-slate-700/50">
+                        <span className="text-3xl block mb-2">🤷‍♂️</span>
+                        <p className="text-slate-300 font-medium">ไม่พบการ์ดที่ค้นหา</p>
+                        <p className="text-slate-500 text-xs mt-1">ลองเปลี่ยนคำค้นหา เช่น "Charizard", "Blue-Eyes", หรือ "Pikachu"</p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {searchResults.map(card => (
+                          <div 
+                            key={card.id} 
+                            className="bg-slate-900 p-4 rounded-xl border border-slate-700 hover:border-amber-500/50 transition flex flex-col justify-between"
+                          >
+                            <div>
+                              <div className="flex justify-between items-start mb-1.5">
+                                <span className="text-[10px] bg-slate-800 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded">
+                                  {card.set}
+                                </span>
+                                <span className="text-lg font-bold text-emerald-400">
+                                  ฿{card.price.toLocaleString()}
+                                </span>
+                              </div>
+                              <h4 className="text-sm font-bold text-slate-100 line-clamp-2">{card.name}</h4>
+                              <p className="text-[11px] text-slate-400 mt-1">อ้างอิงราคาตลาดโลกโดยประมาณจากเว็บบอร์ด</p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-slate-800">
+                              <button 
+                                onClick={() => handleApplyToSingle(card)}
+                                className="bg-indigo-600/25 hover:bg-indigo-600/40 text-indigo-300 hover:text-white border border-indigo-500/20 py-1.5 px-2 rounded text-[11px] font-bold transition flex items-center justify-center gap-1"
+                              >
+                                📥 ส่งไปเครื่องคำนวณเดี่ยว
+                              </button>
+                              <button 
+                                onClick={() => handleApplyToBulk(card)}
+                                className="bg-fuchsia-600/25 hover:bg-fuchsia-600/40 text-fuchsia-300 hover:text-white border border-fuchsia-500/20 py-1.5 px-2 rounded text-[11px] font-bold transition flex items-center justify-center gap-1"
+                              >
+                                📦 ส่งไปคำนวณกลุ่ม
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="bg-slate-900/40 rounded-2xl p-12 text-center border border-dashed border-slate-700">
+                    <span className="text-4xl block mb-3">🔮</span>
+                    <p className="text-sm text-slate-300 font-medium">เริ่มต้นพิมพ์ค้นหาการ์ดที่ต้องการตรวจสอบราคา</p>
+                    <p className="text-xs text-slate-500 mt-1">ฐานข้อมูลครอบคลุมการ์ด Pokemon, Yu-Gi-Oh และ TCG ยอดนิยม</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB: DASHBOARD (HISTORIES & ANALYTICS) */}
+            {activeTab === 'dashboard' && (
+              <div className="space-y-6">
+                
+                {/* Visual SVG Comparison Chart */}
+                <div className="bg-slate-800 rounded-2xl border border-slate-700 p-6 shadow-xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+                  
+                  <h3 className="text-base font-bold text-slate-200 mb-6 flex items-center gap-2">
+                    📊 กราฟเปรียบเทียบ รายรับ - ต้นทุน - กำไรสะสม ของการขายในแต่ละรอบ
+                  </h3>
+
+                  {salesRecords.length === 0 ? (
+                    <div className="py-12 text-center text-slate-400 text-sm">ยังไม่มีข้อมูลการขายเพื่อสร้างกราฟวิเคราะห์</div>
+                  ) : (
+                    <div>
+                      {/* Bar chart representing records */}
+                      <div className="space-y-4">
+                        {salesRecords.slice(0, 5).map((record) => {
+                          const costPercent = Math.min((record.cost / record.priceSold) * 100, 100);
+                          const profitPercent = 100 - costPercent;
+                          return (
+                            <div key={record.id} className="bg-slate-900/55 p-3.5 rounded-xl border border-slate-800">
+                              <div className="flex justify-between items-center mb-1.5 text-xs">
+                                <span className="font-semibold text-slate-200 max-w-[50%] truncate">{record.name} ({record.type})</span>
+                                <span className="text-slate-400">ราคาขายรวม: <b className="text-slate-100">฿{record.priceSold.toLocaleString()}</b></span>
+                              </div>
+                              
+                              {/* Comparative Visual Bar */}
+                              <div className="w-full h-5 bg-slate-800 rounded-full overflow-hidden flex text-[10px] font-bold text-white text-center">
+                                <div 
+                                  style={{ width: `${costPercent}%` }} 
+                                  className="bg-indigo-600 flex items-center justify-center transition-all duration-500"
+                                  title={`ต้นทุน: ฿${record.cost}`}
+                                >
+                                  {costPercent > 20 && `ทุน ฿${record.cost}`}
+                                </div>
+                                <div 
+                                  style={{ width: `${profitPercent}%` }} 
+                                  className="bg-emerald-500 flex items-center justify-center transition-all duration-500"
+                                  title={`กำไรสุทธิ: ฿${record.actualProfit}`}
+                                >
+                                  {profitPercent > 20 && `กำไร ฿${Math.round(record.actualProfit)}`}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      
+                      <p className="text-[11px] text-slate-500 mt-4 text-right">
+                        * แสดงการขายสูงสุด 5 รายการล่าสุด (สีน้ำเงิน = ต้นทุนรวมจริง, สีเขียว = กำไรสุทธิรวมส่วนต่างค่าส่ง)
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Table History */}
+                <div className="bg-slate-800 rounded-2xl border border-slate-700 p-6 shadow-xl">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-base font-bold text-slate-200">ประวัติการบันทึกราคาทั้งหมด ({salesRecords.length} รายการ)</h3>
+                    <button 
+                      onClick={() => {
+                        if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติการบันทึกทั้งหมด?')) {
+                          setSalesRecords([]);
+                          showToast('ล้างประวัติการขายเรียบร้อยแล้ว', 'info');
+                        }
+                      }}
+                      className="text-xs text-rose-400 hover:text-rose-300 font-semibold"
+                    >
+                      🗑️ ล้างทั้งหมด
+                    </button>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-700 text-slate-400 font-semibold bg-slate-900/30">
+                          <th className="py-3 px-3">ประเภท</th>
+                          <th className="py-3 px-3">ชื่อรายการ/กลุ่ม</th>
+                          <th className="py-3 px-3">ต้นทุนสะสม</th>
+                          <th className="py-3 px-3">ส่วนต่างค่าส่ง (กำไร)</th>
+                          <th className="py-3 px-3">กำไรเป้าหมาย</th>
+                          <th className="py-3 px-3 text-emerald-400">กำไรสุทธิจริง</th>
+                          <th className="py-3 px-3 font-bold text-indigo-300">ราคาตั้งขาย</th>
+                          <th className="py-3 px-3 text-center">จัดการ</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800">
+                        {salesRecords.length === 0 ? (
+                          <tr>
+                            <td colSpan="8" className="py-8 text-center text-slate-500">
+                              ไม่มีประวัติการคำนวณบันทึกไว้ในขณะนี้
+                            </td>
+                          </tr>
+                        ) : (
+                          salesRecords.map((r) => (
+                            <tr key={r.id} className="hover:bg-slate-700/20 transition-colors">
+                              <td className="py-3.5 px-3">
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                  r.type === 'เดี่ยว' ? 'bg-indigo-500/25 text-indigo-300' : 'bg-fuchsia-500/25 text-fuchsia-300'
+                                }`}>
+                                  {r.type}
+                                </span>
+                              </td>
+                              <td className="py-3.5 px-3 font-semibold text-slate-100 max-w-[150px] truncate">
+                                {r.name}
+                              </td>
+                              <td className="py-3.5 px-3 text-slate-300">
+                                ฿{r.cost.toLocaleString()}
+                              </td>
+                              <td className="py-3.5 px-3 text-emerald-400">
+                                +฿{(r.shippingCharged - r.shippingActual).toLocaleString()}
+                              </td>
+                              <td className="py-3.5 px-3 text-slate-300">
+                                ฿{r.targetProfit.toLocaleString()}
+                              </td>
+                              <td className="py-3.5 px-3 font-bold text-emerald-400 bg-emerald-500/5">
+                                ฿{r.actualProfit.toLocaleString()}
+                              </td>
+                              <td className="py-3.5 px-3 font-extrabold text-indigo-300">
+                                ฿{r.priceSold.toLocaleString()}
+                              </td>
+                              <td className="py-3.5 px-3 text-center">
+                                <button 
+                                  onClick={() => handleDeleteRecord(r.id)}
+                                  className="text-slate-500 hover:text-rose-400 transition"
+                                >
+                                  ✕ ลบ
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+          </div>
+
+          {/* Sidebar Area Right Side (4 Cols) */}
+          <div className="lg:col-span-4 space-y-6">
+            
+            {/* Business KPI Cards */}
+            <div className="bg-slate-800 rounded-2xl border border-slate-700 p-6 shadow-xl space-y-4">
+              <h3 className="text-sm font-bold tracking-wide text-slate-400 uppercase mb-2">สรุปรายได้ภาพรวมทั้งหมด</h3>
+              
+              <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
+                <p className="text-xs text-slate-400 mb-1">ยอดขายที่คาดหวังรวม (Revenue)</p>
+                <p className="text-2xl font-extrabold text-indigo-300">฿{totalRevenueAll.toLocaleString()}</p>
+              </div>
+
+              <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
+                <p className="text-xs text-slate-400 mb-1">ต้นทุนสินค้าทั้งหมดสะสม (Total Costs)</p>
+                <p className="text-2xl font-extrabold text-slate-300">฿{totalCostAll.toLocaleString()}</p>
+              </div>
+
+              <div className="bg-slate-900 rounded-xl p-4 border border-slate-800 bg-gradient-to-br from-emerald-950/40 to-slate-900/40 border-emerald-500/25">
+                <p className="text-xs text-slate-400 mb-1">กำไรสุทธิทั้งหมดที่จะได้รับจริง (Net Profits)</p>
+                <p className="text-2xl font-extrabold text-emerald-400">฿{totalProfitAll.toLocaleString()}</p>
+              </div>
+
+              <div className="bg-slate-900 rounded-xl p-3 border border-slate-800 flex justify-between items-center text-xs text-slate-300">
+                <span>กำไรจากส่วนต่างค่าจัดส่ง:</span>
+                <span className="font-bold text-amber-400">฿{totalShippingProfit.toLocaleString()} บาท</span>
+              </div>
+            </div>
+
+            {/* Quick Pricing Insight Info Box */}
+            <div className="bg-slate-800 rounded-2xl border border-slate-700 p-5 shadow-xl">
+              <h3 className="text-sm font-bold text-slate-200 mb-3 flex items-center gap-1.5">
+                <span>💡</span> รู้หรือไม่? (ข้อมูลส่วนต่างค่าส่ง)
+              </h3>
+              <div className="space-y-3.5 text-xs text-slate-300 leading-relaxed">
+                <p>
+                  ตามสูตรคำนวณนี้ คุณคิดราคาจัดส่งลูกค้าราคาคงที่ไว้ที่ <strong className="text-white">50 บาท</strong> แต่ค่าส่งตามความจริงคือประมาณ <strong className="text-white">38 บาท</strong> (เช่น ค่าซอง 3 บาท + ค่าส่งไปรษณีย์/ขนส่งด่วน 35 บาท)
+                </p>
+                <p className="bg-slate-900 p-3 rounded-lg border border-slate-700/50 text-emerald-400 font-semibold">
+                  สิ่งนี้ทำให้คุณมีส่วนต่างกำไรเสริมพิเศษเพิ่มขึ้นทันที 12 บาท ต่อการส่งหนึ่งครั้ง! 
+                </p>
+                <p className="text-slate-400">
+                  ระบบนี้จะช่วยนำส่วนต่างนี้เข้าไปรวมกับกำไรจากการ์ดโดยอัตโนมัติ ทำให้คุณมองเห็นยอดเงินสุทธิที่แท้จริงหลังจากที่ขายสินค้าได้แบบแม่นยำที่สุด
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Tools Links & Help */}
+            <div className="bg-slate-800 rounded-2xl border border-slate-700 p-5 shadow-xl text-center">
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">แหล่งที่มาราคาอ้างอิงภายนอก</h4>
+              <div className="grid grid-cols-2 gap-2">
+                <a 
+                  href="https://www.pricecharting.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="bg-slate-900 hover:bg-slate-700 text-[11px] text-slate-300 py-2 px-2.5 rounded border border-slate-700 transition block text-center truncate"
+                >
+                  🌐 PriceCharting
+                </a>
+                <a 
+                  href="https://www.cardmarket.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="bg-slate-900 hover:bg-slate-700 text-[11px] text-slate-300 py-2 px-2.5 rounded border border-slate-700 transition block text-center truncate"
+                >
+                  🌐 Cardmarket
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </main>
+
+      <footer className="max-w-7xl mx-auto px-4 mt-16 text-center text-xs text-slate-500 border-t border-slate-800 pt-6">
+        <p>© 2026 TCG Card Cost & Profit Calculator. พัฒนาขึ้นมาเพื่อการจัดการการ์ดระดับมืออาชีพ</p>
+        <p className="mt-1">ราคาและค่าธรรมเนียมที่แสดงในระบบเป็นการประมาณการโดยอิงหลักสถิติและส่วนต่างค่าบริการจัดส่งจริง</p>
+      </footer>
     </div>
-
-</body>
-</html>
+  );
+}
