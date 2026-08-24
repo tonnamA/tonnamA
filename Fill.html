@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบทำนายชะตา ไอติมผ้าสามสี 🔮✨</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Prompt & Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #28104e 50%, #0f172a 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .text-glow-pink {
+            text-shadow: 0 0 10px rgba(236, 72, 153, 0.7), 0 0 20px rgba(236, 72, 153, 0.5);
+        }
+        .text-glow-yellow {
+            text-shadow: 0 0 10px rgba(234, 179, 8, 0.8), 0 0 20px rgba(234, 179, 8, 0.5);
+        }
+        .text-glow-green {
+            text-shadow: 0 0 10px rgba(34, 197, 94, 0.8), 0 0 20px rgba(34, 197, 94, 0.5);
+        }
+        .poster-border {
+            border: 4px solid #facc15;
+            box-shadow: 0 0 25px rgba(250, 204, 21, 0.4);
+        }
+        .shrine-bg {
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.6) 100%);
+        }
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="py-8 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-3xl mx-auto">
+        <!-- 🌟 Header Section -->
+        <header class="text-center mb-8">
+            <div class="inline-block bg-pink-500/20 text-pink-300 border border-pink-500/40 px-4 py-1.5 rounded-full text-sm font-semibold mb-3">
+                ✨ แบบทำนายดวงชะตาสูตรโบราณศักดิ์สิทธิ์
+            </div>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-400 to-green-400 mb-2">
+                🔮 ไอติมผ้าสามสี ทำนายชะตา
+            </h1>
+            <p class="text-slate-300 text-base sm:text-lg">
+                ตรวจดวงชะตา <span class="bg-pink-500/30 text-pink-200 px-1.5 py-0.5 rounded font-semibold">ความรัก</span> 
+                และ <span class="bg-yellow-500/30 text-yellow-200 px-1.5 py-0.5 rounded font-semibold">การเงิน</span> 
+                พร้อมรับสิทธิ์ไอติมเสริมนัยน์ตามงคล!
+            </p>
+        </header>
+
+        <!-- 📋 Quiz Form -->
+        <main id="quizCard" class="bg-slate-900/80 backdrop-blur-md border border-slate-700/60 rounded-2xl p-6 sm:p-8 shadow-2xl transition-all duration-500">
+            
+            <form id="fortuneForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                
+                <!-- Section 1: ข้อมูลวันเกิด -->
+                <div>
+                    <h2 class="text-xl font-bold text-yellow-300 flex items-center gap-2 mb-4">
+                        <span>👤</span> 1. ข้อมูลชะตาเกิดของคุณ
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">ชื่อหรือชื่อเล่น</label>
+                            <input type="text" id="userName" required placeholder="เช่น น้องเจมส์ สายมู" 
+                                class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-pink-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">วันประจำวันเกิด</label>
+                            <select id="birthDay" required class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-pink-500 transition">
+                                <option value="">-- เลือกวันเกิด --</option>
+                                <option value="อาทิตย์">วันอาทิตย์ (ธาตุไฟ)</option>
+                                <option value="จันทร์">วันจันทร์ (ธาตุดิน)</option>
+                                <option value="อังคาร">วันอังคาร (ธาตุลม)</option>
+                                <option value="พุธ">วันพุธ (ธาตุน้ำ)</option>
+                                <option value="พฤหัสบดี">วันพฤหัสบดี (ธาตุดินแข็ง)</option>
+                                <option value="ศุกร์">วันศุกร์ (ธาตุน้ำบริสุทธิ์)</option>
+                                <option value="เสาร์">วันเสาร์ (ธาตุไฟแรง)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-slate-700/80 my-4">
+
+                <!-- Section 2: เลือกรสชาติไอติมศักดิ์สิทธิ์ -->
+                <div>
+                    <h2 class="text-xl font-bold text-pink-400 flex items-center gap-2 mb-2">
+                        <span>🍦</span> 2. เลือกรสชาติไอติมหนุนดวงที่คุณโปรดปราน
+                    </h2>
+                    <p class="text-xs text-slate-400 mb-4">รสชาติที่คุณเลือกจะสะท้อนสภาวะจิตและกระแสโชคลาภในช่วงนี้</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="iceCreamFlavor" value="green" class="peer hidden" required>
+                            <div class="p-4 rounded-xl border border-slate-700 bg-slate-800/60 peer-checked:border-green-400 peer-checked:bg-green-950/40 text-center hover:border-slate-500 transition">
+                                <div class="text-3xl mb-1">🍈</div>
+                                <div class="font-bold text-green-300">เมล่อนผ้าสามสี</div>
+                                <div class="text-xs text-slate-400 mt-1">สดชื่น ลุยขจัดอุปสรรค</div>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="iceCreamFlavor" value="pink" class="peer hidden">
+                            <div class="p-4 rounded-xl border border-slate-700 bg-slate-800/60 peer-checked:border-pink-400 peer-checked:bg-pink-950/40 text-center hover:border-slate-500 transition">
+                                <div class="text-3xl mb-1">🍓</div>
+                                <div class="font-bold text-pink-300">สตอเบอร์รี่ศาลเจ้า</div>
+                                <div class="text-xs text-slate-400 mt-1">เมตตามหานิยม หวานฉ่ำ</div>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="iceCreamFlavor" value="yellow" class="peer hidden">
+                            <div class="p-4 rounded-xl border border-slate-700 bg-slate-800/60 peer-checked:border-yellow-400 peer-checked:bg-yellow-950/40 text-center hover:border-slate-500 transition">
+                                <div class="text-3xl mb-1">🥛</div>
+                                <div class="font-bold text-yellow-300">โยเกิร์ตทองคำมงคล</div>
+                                <div class="text-xs text-slate-400 mt-1">ปรับสมดุล รับโชคใหญ่</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <hr class="border-slate-700/80 my-4">
+
+                <!-- Section 3: สิ่งของถวายแก้บน -->
+                <div>
+                    <h2 class="text-xl font-bold text-green-400 flex items-center gap-2 mb-3">
+                        <span>⛩️</span> 3. เลือกของถวายเสริมดวงหน้าศาลพระภูมิ
+                    </h2>
+                    <select id="offering" required class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-pink-500 transition">
+                        <option value="">-- เลือกของถวายเสริมดวง --</option>
+                        <option value="น้ำแดง 2 ขวด">🥤 น้ำแดง 2 ขวด พร้อมหลอดคู่ (เสริมความรักหวานชื่น)</option>
+                        <option value="พวงมาลัยผ้าสามสี">💐 พวงมาลัยผ้าสามสีสดใส (ผูกดวงสืบต่อโชคชะตา)</option>
+                        <option value="ธูป 9 ดอก และทองคำแผ่น">🕯️ ธูป 9 ดอก และแผ่นทองคำ (เปิดทางสว่างการงาน)</option>
+                        <option value="ไอติมเย็นฉ่ำ 3 ถ้วย">🍨 ไอติมเย็นฉ่ำ 3 รสชาติ (ดับร้อน ดับเคราะห์กรรม)</option>
+                    </select>
+                </div>
+
+                <hr class="border-slate-700/80 my-4">
+
+                <!-- Section 4: เสี่ยงทายเลขมงคล -->
+                <div>
+                    <h2 class="text-xl font-bold text-purple-400 flex items-center gap-2 mb-2">
+                        <span>🎲</span> 4. ตั้งจิตอธิษฐานแล้วเลือกตัวเลข (1 - 127)
+                    </h2>
+                    <input type="number" id="luckyNum" min="1" max="127" required placeholder="ป้อนตัวเลขที่คุณถูกชะตา (1-127)" 
+                        class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-pink-500 transition">
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                    class="w-full mt-6 bg-gradient-to-r from-yellow-400 via-pink-500 to-green-500 hover:opacity-95 text-slate-950 font-extrabold text-lg py-4 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    ส่งคำขอทำนาย & รับสิทธิ์ไอติมผ้าสามสี
+                </button>
+            </form>
+        </main>
+
+        <!-- 🔮 Fortune Result View (Hidden Initially) -->
+        <section id="resultCard" class="hidden bg-slate-900/90 border border-slate-700/80 rounded-2xl p-6 sm:p-8 shadow-2xl transition-all duration-500">
+            
+            <div class="text-center mb-6">
+                <span id="resGreetingBadge" class="bg-yellow-500/20 text-yellow-300 border border-yellow-500/40 px-3 py-1 rounded-full text-xs font-semibold">
+                    ✨ ผลคำทำนายเฉพาะบุคคล
+                </span>
+                <h2 id="resTitle" class="text-3xl font-extrabold text-white mt-2">
+                    ดวงชะตาของ <span id="resUserName" class="text-pink-400">คุณ</span>
+                </h2>
+                <p id="resSubtitle" class="text-slate-400 text-sm mt-1">ประจำวันเกิด <span id="resBirthDay" class="text-yellow-300 font-medium">...</span></p>
+            </div>
+
+            <!-- Horizontal Divider -->
+            <hr class="border-slate-700/80 mb-6">
+
+            <div class="space-y-6">
+                <!-- 🌟 ดวงชะตาทั่วไป -->
+                <div class="bg-slate-800/80 border-l-4 border-yellow-400 p-4 rounded-r-xl">
+                    <h3 class="text-lg font-bold text-yellow-300 flex items-center gap-2 mb-2">
+                        <span>🌟</span> ดวงชะตาทั่วไป (Overall Fate)
+                    </h3>
+                    <p id="resGeneralFortune" class="text-slate-200 leading-relaxed text-sm sm:text-base">
+                        -- กำลังโหลด --
+                    </p>
+                </div>
+
+                <!-- 💖 ดวงความรัก -->
+                <div class="bg-slate-800/80 border-l-4 border-pink-500 p-4 rounded-r-xl">
+                    <h3 class="text-lg font-bold text-pink-400 flex items-center gap-2 mb-2">
+                        <span>💖</span> ความรัก & ความสัมพันธ์ (Love & Romance)
+                    </h3>
+                    <p id="resLoveFortune" class="text-slate-200 leading-relaxed text-sm sm:text-base">
+                        -- กำลังโหลด --
+                    </p>
+                </div>
+
+                <!-- 💰 ดวงการเงิน -->
+                <div class="bg-slate-800/80 border-l-4 border-green-400 p-4 rounded-r-xl">
+                    <h3 class="text-lg font-bold text-green-300 flex items-center gap-2 mb-2">
+                        <span>💰</span> การเงิน & โชคลาภ (Wealth & Fortune)
+                    </h3>
+                    <p id="resWealthFortune" class="text-slate-200 leading-relaxed text-sm sm:text-base">
+                        -- กำลังโหลด --
+                    </p>
+                </div>
+
+                <!-- 🍨 สิ่งเสริมนัยน์ตา & ไอติมประจำตัว -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-purple-950/40 border border-purple-500/30 p-4 rounded-xl">
+                        <h4 class="font-bold text-purple-300 flex items-center gap-2 text-sm mb-1">
+                            <span>🍦</span> ไอติมนำโชคประจำราศี
+                        </h4>
+                        <p id="resIceCreamRecommendation" class="text-slate-300 text-sm">
+                            -- กำลังโหลด --
+                        </p>
+                    </div>
+
+                    <div class="bg-blue-950/40 border border-blue-500/30 p-4 rounded-xl">
+                        <h4 class="font-bold text-blue-300 flex items-center gap-2 text-sm mb-1">
+                            <span>🎯</span> เลขมงคล & สิ่งเสริมดวง
+                        </h4>
+                        <p id="resLuckyTips" class="text-slate-300 text-sm">
+                            -- กำลังโหลด --
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ⛩️ ข้อแนะนำเสริมดวง -->
+                <div class="bg-amber-950/30 border border-amber-500/40 p-4 rounded-xl text-amber-200 text-sm">
+                    <div class="font-bold mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-hands-praying"></i> เคล็ดลับเสริมดวงชะตาช่วงนี้:
+                    </div>
+                    <p id="resAdvice">
+                        ควรนำของถวายที่เลือกไปกราบไหว้สิ่งศักดิ์สิทธิ์ใกล้บ้าน และแบ่งปันความหวานเย็นให้กับผู้อื่นเพื่อเสริมบารมีโชคลาภ!
+                    </p>
+                </div>
+            </div>
+
+            <hr class="border-slate-700/80 my-6">
+
+            <!-- Reset Button -->
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="resetQuiz()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-3 rounded-xl border border-slate-600 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-left"></i> ทำนายใหม่อีกครั้ง
+                </button>
+                <button onclick="shareResult()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-share-nodes"></i> แชร์คำทำนาย
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- 🖼️ MODAL POPUP: โปสเตอร์ "ไอติมผ้าสามสี" -->
+    <div id="posterModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="relative w-full max-w-lg bg-slate-950 rounded-3xl border-4 border-yellow-400 p-4 sm:p-6 shadow-2xl text-center my-auto transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+            
+            <!-- Badge Top -->
+            <div class="inline-block bg-yellow-400 text-slate-950 font-black text-xs sm:text-sm px-4 py-1 rounded-full uppercase tracking-wider mb-2">
+                🎉 ยินดีด้วย! คุณได้รับสิทธิ์พิเศษ
+            </div>
+
+            <!-- POSTER CANVAS RECREATION -->
+            <div class="relative rounded-2xl overflow-hidden bg-gradient-to-b from-sky-400 via-sky-200 to-amber-100 p-4 sm:p-5 border-2 border-pink-400 my-3 text-slate-900 shadow-inner">
+                
+                <!-- Sunburst Effect Background -->
+                <div class="absolute inset-0 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-white/60 via-transparent to-transparent opacity-80 pointer-events-none"></div>
+
+                <!-- Poster Title Header -->
+                <div class="relative z-10">
+                    <h1 class="text-5xl sm:text-6xl font-black text-yellow-300 drop-shadow-[0_4px_4px_rgba(0,0,0,0.9)] stroke-black tracking-tight leading-tight">
+                        ไอติม
+                    </h1>
+                    <h2 class="text-4xl sm:text-5xl font-black text-pink-600 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] leading-tight">
+                        ผ้าสามสี
+                    </h2>
+                </div>
+
+                <!-- Graphic Illustration Area: Shrine & Ice Cream -->
+                <div class="relative my-4 flex justify-center items-center h-48 sm:h-52">
+                    <!-- Spirit Shrine Illustration -->
+                    <div class="absolute bottom-2 w-32 h-36 bg-white border-2 border-amber-400 rounded-t-lg shadow-md flex flex-col items-center justify-between p-1">
+                        <div class="w-full h-4 bg-amber-400 rounded-t"></div>
+                        <div class="w-20 h-20 border-2 border-amber-300 rounded-t-full bg-slate-100 flex items-center justify-center">
+                            <span class="text-2xl">🕯️</span>
+                        </div>
+                        <div class="w-24 h-6 bg-amber-200 border border-amber-400 rounded-sm"></div>
+                    </div>
+
+                    <!-- Ice cream bowl with 3 scoops & funny faces -->
+                    <div class="relative z-10 bottom-0 flex flex-col items-center">
+                        <div class="flex -mb-4 z-10">
+                            <!-- Green Scoop (Melon) -->
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 bg-green-400 rounded-full border-2 border-white flex items-center justify-center text-xs font-extrabold shadow-md transform -rotate-6" title="เมล่อน">
+                                👓 🍈
+                            </div>
+                            <!-- Pink Scoop (Strawberry) -->
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-pink-400 rounded-full border-2 border-white flex items-center justify-center text-xs font-extrabold shadow-md z-20 -mx-2 -mt-2" title="สตอเบอร์รี่">
+                                👓 🍓
+                            </div>
+                            <!-- Yellow Scoop (Yogurt) -->
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 bg-yellow-300 rounded-full border-2 border-white flex items-center justify-center text-xs font-extrabold shadow-md transform rotate-6" title="โยเกิร์ต">
+                                👓 🥛
+                            </div>
+                        </div>
+                        <!-- Bowl -->
+                        <div class="w-32 sm:w-36 h-12 bg-slate-200 border-2 border-slate-400 rounded-b-full shadow-lg flex items-center justify-center font-bold text-xs sm:text-sm text-slate-700">
+                            ถ้วยศักดิ์สิทธิ์
+                        </div>
+                    </div>
+
+                    <!-- Neon Badge 127 ถ้วยเท่านั้น -->
+                    <div class="absolute right-0 top-2 bg-lime-400 text-slate-950 font-black p-2 rounded-lg transform rotate-12 shadow-lg border-2 border-pink-500 text-left animate-pulse">
+                        <div class="text-2xl sm:text-3xl leading-none text-glow-green">127</div>
+                        <div class="text-[10px] sm:text-xs leading-tight font-extrabold">ถ้วยเท่านั้น</div>
+                    </div>
+                </div>
+
+                <!-- Poster Footer Event Details -->
+                <div class="relative z-10 bg-slate-950/80 rounded-xl p-3 text-white border border-cyan-400/50 my-1">
+                    <div class="text-cyan-300 font-extrabold text-sm sm:text-base">
+                        📅 25 สิงหาคม 2569
+                    </div>
+                    <div class="text-xs sm:text-sm text-slate-200 mt-0.5">
+                        📍 ณ แกรนด์ กาล่า โรส
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Action Button to Close Modal and Reveal Prediction (ใหญ่ กว้าง ชัดเจนขึ้น) -->
+            <button onclick="revealFortuneResult()" 
+                class="w-full mt-3 bg-gradient-to-r from-yellow-400 via-pink-500 to-yellow-400 hover:from-yellow-300 hover:to-pink-400 text-slate-950 font-black text-xl sm:text-2xl py-5 sm:py-6 rounded-2xl shadow-[0_0_25px_rgba(250,204,21,0.5)] border-2 border-yellow-200 transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 animate-pulse-slow cursor-pointer">
+                <span class="text-2xl sm:text-3xl">🔮</span>
+                <span class="tracking-wide">เปิดอ่านผลคำทำนายดวงชะตา</span>
+                <span class="text-2xl sm:text-3xl">✨</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Global State
+        let currentUserData = {};
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            // Collect Form Data
+            const name = document.getElementById('userName').value.trim();
+            const birthDay = document.getElementById('birthDay').value;
+            const flavor = document.querySelector('input[name="iceCreamFlavor"]:checked')?.value || 'pink';
+            const offering = document.getElementById('offering').value;
+            const luckyNum = parseInt(document.getElementById('luckyNum').value) || 7;
+
+            // Generate Coupon number (1-127)
+            const couponNum = String(luckyNum).padStart(3, '0');
+
+            currentUserData = { name, birthDay, flavor, offering, luckyNum, couponNum };
+
+            // Show Poster Modal with Confetti
+            showPosterModal();
+        }
+
+        function showPosterModal() {
+            const modal = document.getElementById('posterModal');
+            const modalContent = document.getElementById('modalContent');
+
+            // Display Modal
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 50);
+
+            // Trigger Celebration Confetti
+            confetti({
+                particleCount: 80,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        function revealFortuneResult() {
+            const modal = document.getElementById('posterModal');
+            const modalContent = document.getElementById('modalContent');
+
+            // Hide Modal
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                
+                // Process and Display Results
+                generateFortuneData();
+
+                // Switch Views
+                document.getElementById('quizCard').classList.add('hidden');
+                document.getElementById('resultCard').classList.remove('hidden');
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                // Confetti for results
+                confetti({
+                    particleCount: 120,
+                    spread: 100,
+                    origin: { y: 0.4 }
+                });
+            }, 300);
+        }
+
+        function generateFortuneData() {
+            const { name, birthDay, flavor, offering, luckyNum } = currentUserData;
+
+            // Display Basic Info
+            document.getElementById('resUserName').innerText = name;
+            document.getElementById('resBirthDay').innerText = `วัน${birthDay}`;
+
+            // Fortune Database Logic
+            const generalFortunes = {
+                "อาทิตย์": "ช่วงนี้ดวงชะตาสว่างไสวเหมือนแสงอาทิตย์ยามเช้า สิ่งที่คิดไว้เริ่มปรากฏเป็นรูปธรรม มีเกณฑ์ได้รับการสนับสนุนจากผู้ใหญ่หรือผู้มีอำนาจ โชคชะตากำลังเปิดทางให้คุณแสดงความสามารถเต็มที่!",
+                "จันทร์": "ชะตาชีวิตละมุนราบรื่น มีความอบอุ่นและเสน่ห์ในตัวเองสูง การประสานงานหรือเจรจาใดๆ จะได้รับความเมตตาเอ็นดูเป็นพิเศษ เหมาะแก่การตั้งรับและวางแผนระยะยาว",
+                "อังคาร": "ดวงชะตาพลังงานสูง มีความกระตือรือร้นและพร้อมลุยอุปสรรค สิ่งที่เคยติดขัดจะถูกคลี่คลายด้วยความกล้าหาญของคุณเอง มีโอกาสได้รับข่าวดีเรื่องงานหรือโครงการใหม่",
+                "พุธ": "ดวงด้านความคิดสติปัญญาและปัญญาอ่อนโยนโดดเด่น การติดต่อสื่อสาร ค้าขาย หรือเจรจาจะนำพาทรัพย์และโอกาสใหม่ๆ เข้ามาอย่างไม่ขาดสาย",
+                "พฤหัสบดี": "ดาวพฤหัสบดีเสวยอายุ ส่งผลให้ดวงชะตามีความมั่นคง สติปัญญาเฉียบแหลม มีผู้ใหญ่และสิ่งศักดิ์สิทธิ์คอยคุ้มครองปกป้องให้พ้นภัย",
+                "ศุกร์": "โชคชะตาเต็มไปด้วยความสุข ความสุนทรีย์ และโอกาสแห่งความรื่นเริง ชีวิตมีเกณฑ์ได้รับของขวัญ ลาภปาก หรือการเดินทางท่องเที่ยวพักผ่อนที่ประทับใจ",
+                "เสาร์": "ดวงชะตาเข้มแข็งอดทน แม้มีเรื่องให้คิดท้าทาย แต่ความเพียรของคุณจะนำไปสู่ความสำเร็จที่ยิ่งใหญ่และยั่งยืน รากฐานชีวิตกำลังถูกยกระดับขึ้นอีกขั้น"
+            };
+
+            const loveFortunes = {
+                "green": "💖 **ความรักสายเมล่อนสดชื่นลุยจริงใจ**: คนมีคู่จะช่วยกันสร้างฐานะและผ่านพ้นอุปสรรคไปได้ด้วยดี สดชื่นราบรื่น ส่วนคนโสดมีเกณฑ์พบรักกับคนขยัน สดใส หรือรู้จักกันผ่านการทำงาน",
+                "pink": "🩷 **ความรักสตอเบอร์รี่หวานฉ่ำเสน่ห์พร่างพราว**: เสน่ห์เมตตามหานิยมทำงานเต็มที่ คนโสดจะมีคนเข้ามาสนใจมากกว่า 1 คน! คนมีคู่ความรักจะหวานชื่น ปรับความเข้าใจกันได้อย่างรวดเร็ว",
+                "yellow": "💛 **ความรักโยเกิร์ตสมดุลพารวย**: ความรักราบรื่นปรับตัวเข้ากันได้ดีและเสริมดวงการเงิน คนรักจะนำพาโชคลาภหรือโอกาสทำมาหากินมาให้ คนโสดมีโอกาสพบรักกับคนสายเปย์หรือคนที่มีฐานะมั่นคง"
+            };
+
+            const wealthFortunes = [
+                `💰 **โชคลาภเข้าหาจากตัวเลขมงคล ${luckyNum}**: การเงินมีสภาพคล่องดีขึ้นอย่างเห็นได้ชัด มีลาภลอยเข้ามาแบบไม่ทันตั้งตัว หรือได้เงินจากงานเสริมที่เคยทำไว้`,
+                `📈 **การเงินมั่นคง พูนถอนอุปสรรค**: ทรัพย์สินเงินทองไหลมาเทมาจากการบริหารจัดการที่ดี สิ่งที่คุณลงทุนไว้จะเริ่มส่งผลกำไรเป็นที่น่าพอใจ`,
+                `🎁 **มีเกณฑ์ได้รับโชคใหญ่**: สิ่งศักดิ์สิทธิ์เตรียมประทานโชคลาภผ่านของถวายที่คุณเลือก (${offering}) ควรตั้งใจทำมาหากินและอุทิศบุญกุศลเพื่อเปิดทางทรัพย์`
+            ];
+
+            const iceCreamRecommendations = {
+                "green": "🍈 **ไอติมรสเมล่อนผ้าสามสี**: ช่วยเสริมพลังความสดชื่น ตัดวิบากกรรม ขจัดสิ่งติดขัดให้ราบรื่นไร้อุปสรรค",
+                "pink": "🍓 **ไอติมรสสตอเบอร์รี่ศาลเจ้า**: เสริมเมตตามหานิยม ความรักหวานฉ่ำ ให้คนรักคนเอ็นดู เจรจาค้าขายสำเร็จราบรื่น",
+                "yellow": "🥛 **ไอติมรสโยเกิร์ตทองคำ**: เสริมดวงขวัญถุง ปรับสมดุลชีวิตให้ราบรื่น ดึงดูดทรัพย์สินเงินทองและโชคลาภก้อนโต"
+            };
+
+            // Set Content to View
+            document.getElementById('resGeneralFortune').innerHTML = generalFortunes[birthDay] || generalFortunes["อาทิตย์"];
+            document.getElementById('resLoveFortune').innerHTML = loveFortunes[flavor] || loveFortunes["pink"];
+            
+            // Randomly select wealth index based on lucky number
+            const wealthIndex = (luckyNum + birthDay.length) % wealthFortunes.length;
+            document.getElementById('resWealthFortune').innerHTML = wealthFortunes[wealthIndex];
+
+            document.getElementById('resIceCreamRecommendation').innerHTML = iceCreamRecommendations[flavor];
+            
+            // Lucky tips
+            const secondaryNum = (luckyNum * 3) % 99 + 1;
+            document.getElementById('resLuckyTips').innerHTML = `
+                • **เลขมงคลเด่น**: <span class="text-yellow-300 font-bold">${luckyNum}</span>, <span class="text-pink-400 font-bold">${secondaryNum}</span><br>
+                • **ของถวายเสริมดวง**: ${offering}<br>
+                • **สีสิริมงคล**: ${flavor === 'green' ? 'เขียวเมล่อนเหนี่ยวทรัพย์' : flavor === 'pink' ? 'ชมพูสตอเบอร์รี่มหาเสน่ห์' : 'เหลืองโยเกิร์ตอร่ามร่ำรวย'}
+            `;
+        }
+
+        function resetQuiz() {
+            document.getElementById('fortuneForm').reset();
+            document.getElementById('resultCard').classList.add('hidden');
+            document.getElementById('quizCard').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function shareResult() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'ผลทำนายดวงชะตา - ไอติมผ้าสามสี',
+                    text: `🔮 ดวงชะตาของ ${currentUserData.name} ได้รับสิทธิ์ไอติมผ้าสามสี! มาตรวจดวงกันเถอะ`,
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('คัดลอกลิงก์เรียบร้อยแล้ว! สามารถส่งต่อให้เพื่อนทำนายดวงได้เลย');
+            }
+        }
+    </script>
+</body>
+</html>
