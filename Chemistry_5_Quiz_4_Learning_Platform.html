@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry 5 Quiz 4 - Study Guide & Interactive App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <!-- Google Font Prompt & Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header / Navigation -->
+    <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                    <div class="bg-indigo-600 p-2 rounded-lg text-white">
+                        <i data-lucide="flask-conical" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight">Chem 5 Quiz 4</h1>
+                        <p class="text-xs text-indigo-200">Organic Chemistry & Hydrocarbon Reactions</p>
+                    </div>
+                </div>
+
+                <nav class="hidden md:flex space-x-1">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-800 transition flex items-center gap-1.5 text-white bg-indigo-800">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> แดชบอร์ด
+                    </button>
+                    <button onclick="switchTab('roadmap')" id="nav-roadmap" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-800 transition flex items-center gap-1.5 text-indigo-200 hover:text-white">
+                        <i data-lucide="map" class="w-4 h-4"></i> Roadmap
+                    </button>
+                    <button onclick="switchTab('lessons')" id="nav-lessons" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-800 transition flex items-center gap-1.5 text-indigo-200 hover:text-white">
+                        <i data-lucide="book-open" class="w-4 h-4"></i> บทเรียน
+                    </button>
+                    <button onclick="switchTab('tools')" id="nav-tools" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-800 transition flex items-center gap-1.5 text-indigo-200 hover:text-white">
+                        <i data-lucide="calculator" class="w-4 h-4"></i> เครื่องมือ & ปฏิกิริยา
+                    </button>
+                    <button onclick="switchTab('mock')" id="nav-mock" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-800 transition flex items-center gap-1.5 text-indigo-200 hover:text-white">
+                        <i data-lucide="file-check" class="w-4 h-4"></i> Mock Quiz
+                    </button>
+                    <button onclick="switchTab('cheatsheet')" id="nav-cheatsheet" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-800 transition flex items-center gap-1.5 text-indigo-200 hover:text-white">
+                        <i data-lucide="zap" class="w-4 h-4"></i> สรุปเร่งด่วน
+                    </button>
+                </nav>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="text-indigo-200 hover:text-white focus:outline-none p-2">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-indigo-950 px-2 pt-2 pb-4 space-y-1 border-t border-indigo-800">
+            <button onclick="switchTab('dashboard'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-white hover:bg-indigo-800 flex items-center gap-2">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> แดชบอร์ด
+            </button>
+            <button onclick="switchTab('roadmap'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-indigo-200 hover:bg-indigo-800 flex items-center gap-2">
+                <i data-lucide="map" class="w-5 h-5"></i> Roadmap
+            </button>
+            <button onclick="switchTab('lessons'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-indigo-200 hover:bg-indigo-800 flex items-center gap-2">
+                <i data-lucide="book-open" class="w-5 h-5"></i> บทเรียน
+            </button>
+            <button onclick="switchTab('tools'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-indigo-200 hover:bg-indigo-800 flex items-center gap-2">
+                <i data-lucide="calculator" class="w-5 h-5"></i> เครื่องมือ & ปฏิกิริยา
+            </button>
+            <button onclick="switchTab('mock'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-indigo-200 hover:bg-indigo-800 flex items-center gap-2">
+                <i data-lucide="file-check" class="w-5 h-5"></i> Mock Quiz
+            </button>
+            <button onclick="switchTab('cheatsheet'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-indigo-200 hover:bg-indigo-800 flex items-center gap-2">
+                <i data-lucide="zap" class="w-5 h-5"></i> สรุปเร่งด่วน
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- 1. DASHBOARD VIEW -->
+        <section id="view-dashboard" class="tab-content space-y-6">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="bg-indigo-500/40 text-indigo-100 text-xs font-semibold px-3 py-1 rounded-full border border-indigo-300/30">Chemistry 5 Quiz 4</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold mt-3">เตรียมสอบเคมีอินทรีย์ & ปฏิกิริยา ไฮโดรคาร์บอน</h2>
+                    <p class="mt-2 text-indigo-100 text-sm sm:text-base leading-relaxed">
+                        ระบบเตรียมความพร้อมสมบูรณ์แบบ ครอบคลุม IUPAC, ปฏิกิริยา Substitution, Addition, Elimination, Combustion, Isomer และ Reaction Chain
+                    </p>
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <button onclick="switchTab('lessons')" class="bg-white text-indigo-700 hover:bg-indigo-50 px-5 py-2.5 rounded-xl font-semibold shadow text-sm transition flex items-center gap-2">
+                            <i data-lucide="play-circle" class="w-4 h-4"></i> เริ่มเรียนตาม Roadmap
+                        </button>
+                        <button onclick="switchTab('mock')" class="bg-indigo-700/80 hover:bg-indigo-800 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition border border-indigo-400/30 flex items-center gap-2">
+                            <i data-lucide="file-check" class="w-4 h-4"></i> ทำ Mock Quiz
+                        </button>
+                    </div>
+                </div>
+                <div class="absolute -right-10 -bottom-10 opacity-15 pointer-events-none">
+                    <i data-lucide="atom" class="w-80 h-80 text-white"></i>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                        <i data-lucide="book-open" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">บทเรียนที่เสร็จสิ้น</p>
+                        <p class="text-xl font-bold text-slate-800"><span id="completed-count">0</span> / 10</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-green-50 text-green-600 rounded-xl">
+                        <i data-lucide="award" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">คะแนน Mock Quiz ล่าสุด</p>
+                        <p class="text-xl font-bold text-slate-800"><span id="last-score">-</span></p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
+                        <i data-lucide="target" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">เป้าหมายหลัก</p>
+                        <p class="text-sm font-bold text-slate-800">Addition & Isomer</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-purple-50 text-purple-600 rounded-xl">
+                        <i data-lucide="clock" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">วันเตรียมตัวแนะนำ</p>
+                        <p class="text-sm font-bold text-slate-800">7 Days Plan</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Priority Learning Focus & Exam Traps -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Learning Objectives -->
+                <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                            <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-600"></i>
+                            จุดประสงค์การเรียนรู้ (Learning Objectives)
+                        </h3>
+                        <span class="text-xs text-slate-500">Chem 5 Quiz 4</span>
+                    </div>
+                    <ul class="space-y-2.5 text-sm text-slate-600">
+                        <li class="flex items-start gap-2.5">
+                            <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded mt-0.5">1</span>
+                            <span>แยกความแตกต่างระหว่าง Alkane, Alkene และ Haloalkane ได้อย่างแม่นยำ</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded mt-0.5">2</span>
+                            <span>ตั้งชื่อและเขียนโครงสร้างโมเลกุลตามหลัก IUPAC ได้ถูกต้อง</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded mt-0.5">3</span>
+                            <span>จำแนกประเภทปฏิกิริยา Substitution, Addition และ Elimination ได้</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded mt-0.5">4</span>
+                            <span>เขียนและดุลสมการ Combustion และย้อนหาสูตรโมเลกุล ($C_aH_{2b}$) จาก $CO_2$ และ $H_2O$</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded mt-0.5">5</span>
+                            <span>หา Structural Isomers ทั้งหมดโดยไม่นับซ้ำ และเข้าใจ Aromatic Substitution (ortho/meta/para)</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Priority Levels -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                        <i data-lucide="alert-circle" class="w-5 h-5 text-amber-500"></i>
+                        เน้นย้ำตาม Priority
+                    </h3>
+
+                    <div class="space-y-3 text-xs">
+                        <div class="p-3 bg-red-50 border border-red-100 rounded-xl">
+                            <span class="font-bold text-red-700 text-sm flex items-center gap-1 mb-1">
+                                🔴 สูงมาก (Must Master)
+                            </span>
+                            <p class="text-red-600">Addition / Elimination, Isomer, Combustion & Reverse Combustion</p>
+                        </div>
+                        <div class="p-3 bg-orange-50 border border-orange-100 rounded-xl">
+                            <span class="font-bold text-orange-700 text-sm flex items-center gap-1 mb-1">
+                                🟠 สูง (High Priority)
+                            </span>
+                            <p class="text-orange-600">Substitution, IUPAC Nomenclature</p>
+                        </div>
+                        <div class="p-3 bg-amber-50 border border-amber-100 rounded-xl">
+                            <span class="font-bold text-amber-700 text-sm flex items-center gap-1 mb-1">
+                                🟡 ปานกลาง (Medium)
+                            </span>
+                            <p class="text-amber-600">Aromatic Substitution (ortho, meta, para)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. ROADMAP VIEW -->
+        <section id="view-roadmap" class="tab-content space-y-6 hidden">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h2 class="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="map-pin" class="w-6 h-6 text-indigo-600"></i>
+                    Learning Roadmap & 7-Day Study Plan
+                </h2>
+                <p class="text-sm text-slate-600 mb-6">ลำดับขั้นตอนการเรียนรู้ที่แนะนำเพื่อให้ครอบคลุมทุกประเด็นข้อสอบอย่างมีประสิทธิภาพ</p>
+
+                <!-- Roadmap Steps Grid -->
+                <div class="relative border-l-2 border-indigo-200 ml-4 pl-6 space-y-8">
+                    <!-- Step 1 -->
+                    <div class="relative">
+                        <div class="absolute -left-9 top-0 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">1</div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-slate-800">IUPAC + โครงสร้างพื้นฐาน</h4>
+                                <span class="bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">Priority 🟠</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">การหา Parent Chain, การใส่เลขตำแหน่ง และการเรียกชื่อ Alkane, Alkene, Haloalkane</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="relative">
+                        <div class="absolute -left-9 top-0 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">2</div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-slate-800">Alkane / Alkene / Haloalkane</h4>
+                                <span class="bg-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded font-semibold">Basics</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">สูตรทั่วไป $C_nH_{2n+2}$, $C_nH_{2n}$ และการแทนที่ด้วย Halogen (Fluoro, Chloro, Bromo, Iodo)</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3-5 -->
+                    <div class="relative">
+                        <div class="absolute -left-9 top-0 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">3</div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-slate-800">Substitution, Addition & Elimination</h4>
+                                <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-semibold">Priority 🔴</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">แยกความแตกต่างระหว่างการแทนที่ (มี HBr/HCl เกิดขึ้น), การเติม (C=C หายไป), และการกำจัด (เกิด C=C)</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 6-7 -->
+                    <div class="relative">
+                        <div class="absolute -left-9 top-0 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">4</div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-slate-800">Combustion & Reverse Combustion</h4>
+                                <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-semibold">Priority 🔴</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">การดุลสมการเผาไหม้สมบูรณ์ และการคำนวณย้อนหาสูตร $C_aH_{2b}$ จากโมลของ $CO_2$ และ $H_2O$</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 8 -->
+                    <div class="relative">
+                        <div class="absolute -left-9 top-0 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">5</div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-slate-800">Structural Isomers</h4>
+                                <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-semibold">Priority 🔴</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">อัลกอริทึมการหาสารไอโซเมอร์ของ $C_4H_{10}$ และ $C_5H_{12}$ โดยไม่ให้ซ้ำกันด้วยหลัก Symmetry</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 9-10 -->
+                    <div class="relative">
+                        <div class="absolute -left-9 top-0 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">6</div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-slate-800">Aromatic Substitution & Reaction Chains</h4>
+                                <span class="bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded font-semibold">Priority 🟡</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">ตำแหน่ง ortho (1,2), meta (1,3), para (1,4) และการวิเคราะห์ปฏิกิริยาต่อเนื่องหลายขั้นตอน</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. LESSONS VIEW -->
+        <section id="view-lessons" class="tab-content space-y-6 hidden">
+            <!-- Lesson Selector Tabs -->
+            <div class="flex gap-2 overflow-x-auto pb-2 border-b border-slate-200">
+                <button onclick="loadLesson('basics')" class="lesson-tab border-b-2 border-indigo-600 text-indigo-600 font-semibold px-4 py-2 text-sm whitespace-nowrap">1. Hydrocarbon Basics</button>
+                <button onclick="loadLesson('iupac')" class="lesson-tab border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-medium px-4 py-2 text-sm whitespace-nowrap">2. IUPAC Nomenclature</button>
+                <button onclick="loadLesson('reactions')" class="lesson-tab border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-medium px-4 py-2 text-sm whitespace-nowrap">3. Reaction Types</button>
+                <button onclick="loadLesson('combustion')" class="lesson-tab border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-medium px-4 py-2 text-sm whitespace-nowrap">4. Combustion</button>
+                <button onclick="loadLesson('isomer')" class="lesson-tab border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-medium px-4 py-2 text-sm whitespace-nowrap">5. Isomerism</button>
+                <button onclick="loadLesson('aromatic')" class="lesson-tab border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-medium px-4 py-2 text-sm whitespace-nowrap">6. Aromatic Chemistry</button>
+            </div>
+
+            <!-- Dynamic Lesson Content Holder -->
+            <div id="lesson-content-container" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-6">
+                <!-- Content will be injected dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- 4. INTERACTIVE TOOLS & REACTION SIMULATOR VIEW -->
+        <section id="view-tools" class="tab-content space-y-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Reverse Combustion Solver Tool -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="p-2 bg-indigo-100 text-indigo-700 rounded-lg">
+                            <i data-lucide="calculator" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-lg">Molecular Formula Solver</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-4">คำนวณหาสูตรโมเลกุล ($C_aH_{2b}$) ของ Hydrocarbon จากจำนวนโมลของ $CO_2$ และ $H_2O$ ที่ได้จากการเผาไหม้</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">จำนวนโมลของ $CO_2$ (a):</label>
+                            <input type="number" id="input-co2" value="3" step="0.5" min="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">จำนวนโมลของ $H_2O$ (b):</label>
+                            <input type="number" id="input-h2o" value="4" step="0.5" min="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <button onclick="calculateMolecularFormula()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg text-sm transition">คำนวณสูตรโมเลกุล</button>
+                    </div>
+
+                    <div id="solver-result" class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                        <p class="text-xs text-slate-500">ผลลัพธ์การคำนวณ:</p>
+                        <p class="text-lg font-bold text-indigo-700 code-font" id="formula-output">C₃H₈</p>
+                        <p class="text-xs text-slate-600 leading-relaxed" id="formula-explanation">
+                            • C = โมล CO₂ = 3<br>
+                            • H = 2 × โมล H₂O = 2 × 4 = 8
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Reaction Classifier Simulator -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="p-2 bg-emerald-100 text-emerald-700 rounded-lg">
+                            <i data-lucide="flask-conical" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-lg">Reaction Classifier Interactive</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-4">ทดสอบจำแนกประเภทปฏิกิริยาจากสมการและเงื่อนไขที่กำหนด</p>
+
+                    <div class="p-4 bg-slate-900 text-green-400 rounded-xl code-font text-sm mb-4" id="classifier-equation">
+                        CH₄ + Br₂ --hν/light--> CH₃Br + HBr
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <button onclick="checkReactionClass('substitution')" class="px-3 py-2 border border-slate-300 hover:bg-indigo-50 rounded-lg text-xs font-semibold text-slate-700 transition">Substitution</button>
+                        <button onclick="checkReactionClass('addition')" class="px-3 py-2 border border-slate-300 hover:bg-indigo-50 rounded-lg text-xs font-semibold text-slate-700 transition">Addition</button>
+                        <button onclick="checkReactionClass('elimination')" class="px-3 py-2 border border-slate-300 hover:bg-indigo-50 rounded-lg text-xs font-semibold text-slate-700 transition">Elimination</button>
+                        <button onclick="checkReactionClass('combustion')" class="px-3 py-2 border border-slate-300 hover:bg-indigo-50 rounded-lg text-xs font-semibold text-slate-700 transition">Combustion</button>
+                    </div>
+
+                    <div id="classifier-feedback" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+
+                    <div class="mt-4 flex justify-between items-center">
+                        <button onclick="nextReactionClassQuestion()" class="text-xs text-indigo-600 hover:underline font-semibold flex items-center gap-1">
+                            สุ่มโจทย์ถัดไป <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Reaction Chain Visualizer -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
+                    <i data-lucide="git-merge" class="w-5 h-5 text-indigo-600"></i>
+                    Reaction Chain Multi-step Analyzer
+                </h3>
+                <p class="text-xs text-slate-600 mb-6">วิเคราะห์ลำดับปฏิกิริยาหลายขั้นตอน (เช่น Alkane → Alkene → Dibromoalkane)</p>
+
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 p-4 bg-indigo-50/50 rounded-xl border border-indigo-100">
+                    <!-- Step A -->
+                    <div class="text-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm w-full md:w-1/3">
+                        <span class="text-xs bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded">เริ่มต้น</span>
+                        <p class="font-bold text-slate-800 text-sm mt-2 code-font">Propane (C₃H₈)</p>
+                        <p class="text-xs text-slate-500 mt-1">CH₃-CH₂-CH₃</p>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <span class="text-[10px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded">Step 1: Dehydrogenation (-H₂)</span>
+                        <i data-lucide="arrow-down" class="w-5 h-5 text-indigo-500 md:hidden my-1"></i>
+                        <i data-lucide="arrow-right" class="w-5 h-5 text-indigo-500 hidden md:block my-1"></i>
+                        <span class="text-[10px] text-slate-500">Elimination Reaction</span>
+                    </div>
+
+                    <!-- Step B -->
+                    <div class="text-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm w-full md:w-1/3">
+                        <span class="text-xs bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded">สารมัธยันตร์</span>
+                        <p class="font-bold text-slate-800 text-sm mt-2 code-font">Propene (C₃H₆)</p>
+                        <p class="text-xs text-slate-500 mt-1">CH₃-CH=CH₂</p>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <span class="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded">Step 2: + Br₂ (in dark)</span>
+                        <i data-lucide="arrow-down" class="w-5 h-5 text-indigo-500 md:hidden my-1"></i>
+                        <i data-lucide="arrow-right" class="w-5 h-5 text-indigo-500 hidden md:block my-1"></i>
+                        <span class="text-[10px] text-slate-500">Addition Reaction</span>
+                    </div>
+
+                    <!-- Step C -->
+                    <div class="text-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm w-full md:w-1/3">
+                        <span class="text-xs bg-purple-100 text-purple-700 font-bold px-2 py-0.5 rounded">ผลิตภัณฑ์สุดท้าย</span>
+                        <p class="font-bold text-slate-800 text-sm mt-2 code-font">1,2-dibromopropane</p>
+                        <p class="text-xs text-slate-500 mt-1">CH₃-CHBr-CH₂Br</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. MOCK EXAM VIEW -->
+        <section id="view-mock" class="tab-content space-y-6 hidden">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Mock Quiz — Chemistry 5 Quiz 4</h2>
+                        <p class="text-xs text-slate-500">แบบทดสอบจำลองแนวข้อสอบจริง 10 ข้อ</p>
+                    </div>
+                    <div id="quiz-timer" class="bg-slate-100 text-slate-700 font-mono text-sm px-3 py-1.5 rounded-lg border border-slate-200 font-semibold flex items-center gap-1.5">
+                        <i data-lucide="clock" class="w-4 h-4 text-indigo-600"></i> <span id="time-display">15:00</span>
+                    </div>
+                </div>
+
+                <!-- Quiz Progress Bar -->
+                <div class="w-full bg-slate-100 h-2 rounded-full mb-6 overflow-hidden">
+                    <div id="quiz-progress" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Active Question Container -->
+                <div id="quiz-question-card" class="space-y-6">
+                    <!-- Question Title -->
+                    <div class="space-y-2">
+                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full" id="question-number-badge">ข้อที่ 1 / 10</span>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800 leading-snug" id="question-text">
+                            ข้อใดคือผลิตภัณฑ์ที่เกิดขึ้นจากปฏิกิริยาระหว่าง CH₄ และ Br₂ เมื่อมีแสงแดด (UV light)?
+                        </h3>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="space-y-2.5" id="options-container">
+                        <!-- Options generated by JS -->
+                    </div>
+
+                    <!-- Answer Feedback Banner -->
+                    <div id="answer-explanation" class="hidden p-4 rounded-xl text-sm space-y-2 border">
+                        <p class="font-bold" id="explanation-title"></p>
+                        <p class="text-xs leading-relaxed" id="explanation-text"></p>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                        <button id="prev-btn" onclick="prevQuestion()" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 disabled:opacity-40" disabled>ข้อก่อนหน้า</button>
+                        <button id="next-btn" onclick="nextQuestion()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold transition">ข้อถัดไป</button>
+                    </div>
+                </div>
+
+                <!-- Quiz Result Summary (Hidden by default) -->
+                <div id="quiz-result-card" class="hidden text-center py-8 space-y-6">
+                    <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl font-bold">
+                        <i data-lucide="award" class="w-10 h-10"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-slate-800">ทำข้อสอบเสร็จสิ้น!</h3>
+                        <p class="text-slate-500 text-sm mt-1">ผลคะแนนของคุณสำหรับ Chem 5 Quiz 4 Mock Exam</p>
+                    </div>
+                    <div class="inline-block bg-slate-50 px-8 py-4 rounded-2xl border border-slate-200">
+                        <p class="text-xs text-slate-500 uppercase font-semibold">Score</p>
+                        <p class="text-4xl font-extrabold text-indigo-600 mt-1"><span id="final-score">0</span> / 10</p>
+                    </div>
+                    
+                    <!-- Weak Topics Recommendation -->
+                    <div id="weak-topics-box" class="max-w-md mx-auto text-left bg-amber-50 border border-amber-200 p-4 rounded-xl text-xs space-y-2">
+                        <p class="font-bold text-amber-800 flex items-center gap-1.5">
+                            <i data-lucide="alert-triangle" class="w-4 h-4"></i> หัวข้อที่ควรทบทวนเพิ่มเติม:
+                        </p>
+                        <ul id="weak-topics-list" class="list-disc pl-5 text-amber-700 space-y-1">
+                            <li>ยังไม่มีข้อมูลข้อผิดพลาด</li>
+                        </ul>
+                    </div>
+
+                    <div class="flex justify-center gap-4">
+                        <button onclick="resetQuiz()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-semibold text-sm hover:bg-indigo-700 transition">ทำข้อสอบใหม่อีกครั้ง</button>
+                        <button onclick="switchTab('lessons')" class="px-5 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50 transition">กลับไปบทเรียน</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 6. CHEAT SHEET VIEW -->
+        <section id="view-cheatsheet" class="tab-content space-y-6 hidden">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="zap" class="w-6 h-6 text-amber-500"></i>
+                        Quick Review Sheet & Exam Traps
+                    </h2>
+                    <span class="text-xs bg-amber-100 text-amber-800 font-semibold px-2.5 py-1 rounded-full">อ่านหน้าห้องสอบ</span>
+                </div>
+
+                <!-- Condition Clues Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-bold">
+                                <th class="p-3 border border-slate-200">Substrate + Condition</th>
+                                <th class="p-3 border border-slate-200">Reaction ที่ควรนึกถึง</th>
+                                <th class="p-3 border border-slate-200">ข้อสังเกตหลัก</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="p-3 font-semibold border border-slate-200">Alkane + Br₂ / Cl₂ + light/UV</td>
+                                <td class="p-3 text-blue-600 font-bold border border-slate-200">Substitution</td>
+                                <td class="p-3 border border-slate-200">มี HBr หรือ HCl เกิดขึ้นเป็น Byproduct</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold border border-slate-200">Alkene + Br₂ (ในที่มืด หรือมีแสง)</td>
+                                <td class="p-3 text-emerald-600 font-bold border border-slate-200">Addition</td>
+                                <td class="p-3 border border-slate-200">พันธะคู่ C=C หายไป กลายเป็น dibromoalkane ไม่มี HBr</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold border border-slate-200">Alkene + H₂</td>
+                                <td class="p-3 text-emerald-600 font-bold border border-slate-200">Addition (Hydrogenation)</td>
+                                <td class="p-3 border border-slate-200">กลายเป็น Alkane</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold border border-slate-200">Alkane → Alkene + H₂</td>
+                                <td class="p-3 text-red-600 font-bold border border-slate-200">Elimination (Dehydrogenation)</td>
+                                <td class="p-3 border border-slate-200">ดึง H₂ ออก เพื่อสร้างพันธะคู่ C=C</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Exam Traps Warning Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-xl space-y-1">
+                        <h4 class="font-bold text-red-800 text-xs flex items-center gap-1.5">
+                            <i data-lucide="alert-octagon" class="w-4 h-4"></i> Trap 1: Br₂ ไม่ได้แปลว่า Substitution เสมอ!
+                        </h4>
+                        <p class="text-xs text-red-700 leading-relaxed">
+                            ต้องดูสารตั้งต้นเสมอ! ถ้าเป็น **Alkane** + Br₂ + แสง $\rightarrow$ Substitution แต่ถ้าเป็น **Alkene** + Br₂ $\rightarrow$ Addition
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-orange-50 border border-orange-200 rounded-xl space-y-1">
+                        <h4 class="font-bold text-orange-800 text-xs flex items-center gap-1.5">
+                            <i data-lucide="alert-octagon" class="w-4 h-4"></i> Trap 2: ดู Byproduct (HBr/HCl) เป็นเบาะแส
+                        </h4>
+                        <p class="text-xs text-orange-700 leading-relaxed">
+                            ถ้าสมการมี $HBr$ ออกมาด้านขวา = **Substitution** แน่นอน แต่ถ้าบวก $Br_2$ แล้วเข้าโมเลกุลหมดไม่มีเศษ $HBr$ = **Addition**
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-1">
+                        <h4 class="font-bold text-amber-800 text-xs flex items-center gap-1.5">
+                            <i data-lucide="alert-octagon" class="w-4 h-4"></i> Trap 3: Isomer ต้องเช็คความสมมาตร (Symmetry)
+                        </h4>
+                        <p class="text-xs text-amber-700 leading-relaxed">
+                            การวาดกลับซ้าย-ขวา หรือกลับบน-ล่าง ถือเป็นโมเลกุลเดียวกัน ให้ตั้งชื่อตามหลัก IUPAC เพื่อตรวจสอบชื่อซ้ำ
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-purple-50 border border-purple-200 rounded-xl space-y-1">
+                        <h4 class="font-bold text-purple-800 text-xs flex items-center gap-1.5">
+                            <i data-lucide="alert-octagon" class="w-4 h-4"></i> Trap 4: Reverse Combustion ไม่ต้องเดาสูตร
+                        </h4>
+                        <p class="text-xs text-purple-700 leading-relaxed">
+                            ถ้าได้ $a\text{ mol } CO_2$ และ $b\text{ mol } H_2O$ สูตร Hydrocarbon คือ $C_aH_{2b}$ เสมอ! (เนื่องจาก $CO_2 1\text{ mol}$ มี C 1 ตัว และ $H_2O 1\text{ mol}$ มี H 2 ตัว)
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 mt-auto border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p>Chemistry 5 Quiz 4 Interactive Study Companion — Organic Chemistry & Hydrocarbon Reactions</p>
+            <p class="text-slate-600">ออกแบบและพัฒนาระบบตามหลักสูตรเคมี ม.ปลาย | พัฒนาด้วย Tailwind CSS & Lucide Icons</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Global App State
+        const state = {
+            completedLessons: new Set(),
+            quizScore: null,
+            currentQuestionIdx: 0,
+            userAnswers: [],
+            weakTopics: new Set(),
+            classifierIdx: 0
+        };
+
+        // Lesson Data Definition
+        const lessonsData = {
+            basics: {
+                title: "1. Hydrocarbon Basics (Alkane, Alkene, Haloalkane)",
+                content: `
+                    <div class="space-y-4">
+                        <div class="p-4 bg-indigo-50 border-l-4 border-indigo-600 rounded-r-xl">
+                            <h4 class="font-bold text-indigo-900 text-sm">Concept</h4>
+                            <p class="text-xs text-indigo-800 leading-relaxed mt-1">
+                                สารประกอบไฮโดรคาร์บอนแบ่งตามประเภทพันธะระหว่างคาร์บอน (C-C) และกลุ่มฟังก์ชัน
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                                <span class="font-bold text-slate-800 text-sm block">1. Alkane</span>
+                                <p class="text-slate-600">มีพันธะเดี่ยว C-C ทั้งหมด เป็นสารอิ่มตัว (Saturated)</p>
+                                <p class="font-mono bg-slate-200 px-2 py-1 rounded font-semibold text-slate-700">สูตรทั่วไป: CₙH₂ₙ₊₂</p>
+                                <p class="text-slate-500">ตัวอย่าง: CH₄ (methane), C₂H₆ (ethane), C₃H₈ (propane)</p>
+                            </div>
+
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                                <span class="font-bold text-slate-800 text-sm block">2. Alkene</span>
+                                <p class="text-slate-600">มีพันธะคู่ C=C อย่างน้อย 1 ตำแหน่ง เป็นสารไม่อิ่มตัว</p>
+                                <p class="font-mono bg-slate-200 px-2 py-1 rounded font-semibold text-slate-700">สูตรทั่วไป: CₙH₂ₙ</p>
+                                <p class="text-slate-500">ตัวอย่าง: CH₂=CH₂ (ethene), CH₂=CH-CH₃ (propene)</p>
+                            </div>
+
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                                <span class="font-bold text-slate-800 text-sm block">3. Haloalkane</span>
+                                <p class="text-slate-600">เกิดจากการแทนที่ H ใน Alkane ด้วยอะตอม Halogen (F, Cl, Br, I)</p>
+                                <p class="font-mono bg-slate-200 px-2 py-1 rounded font-semibold text-slate-700">คำนำหน้า: fluoro-, chloro-, bromo-, iodo-</p>
+                                <p class="text-slate-500">ตัวอย่าง: CH₃CH₂Br (bromoethane), CH₃-CHBr-CH₃ (2-bromopropane)</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            iupac: {
+                title: "2. IUPAC Nomenclature (หลักการตั้งชื่อสาร)",
+                content: `
+                    <div class="space-y-4 text-xs text-slate-700">
+                        <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl">
+                            <h4 class="font-bold text-amber-900 text-sm">3 ขั้นตอนการตั้งชื่อ IUPAC</h4>
+                            <ol class="list-decimal pl-4 mt-2 space-y-1 text-amber-800">
+                                <li><strong>Step 1 (Parent Chain):</strong> เลือกสายคาร์บอนหลักที่ยาวที่สุดที่มีกลุ่มฟังก์ชันหลักอยู่</li>
+                                <li><strong>Step 2 (Numbering):</strong> กำหนดเลขตำแหน่งจากด้านที่ทำให้ตำแหน่งกิ่งหรือพันธะคู่ได้เลขต่ำที่สุด</li>
+                                <li><strong>Step 3 (Functional priority):</strong> หากมีพันธะคู่ C=C ต้องให้พันธะคู่ได้รับเลขต่ำที่สุดเสมอ</li>
+                            </ol>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-xl p-4 space-y-3">
+                            <h5 class="font-bold text-slate-800 text-sm">ตัวอย่างการตั้งชื่อ</h5>
+                            <div class="space-y-2">
+                                <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
+                                    <span class="code-font font-bold">CH₃-CH₂-CH₂-CH₃</span>
+                                    <span class="text-indigo-600 font-semibold">butane (4 Carbons)</span>
+                                </div>
+                                <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
+                                    <span class="code-font font-bold">CH₃-CHBr-CH₂-CH₃</span>
+                                    <span class="text-indigo-600 font-semibold">2-bromobutane</span>
+                                </div>
+                                <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
+                                    <span class="code-font font-bold">CH₂=CH-CH₂-CH₃</span>
+                                    <span class="text-indigo-600 font-semibold">but-1-ene (ไม่ใช่ but-3-ene)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            reactions: {
+                title: "3. Reaction Types (Substitution, Addition, Elimination)",
+                content: `
+                    <div class="space-y-4 text-xs">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl space-y-2">
+                                <h4 class="font-bold text-blue-900 text-sm">1. Substitution (แทนที่)</h4>
+                                <p class="text-blue-800">เกิดกับ Alkane โดย H ถูกแทนด้วย Halogen เมื่อมีแสง/UV</p>
+                                <p class="code-font bg-white p-2 rounded border border-blue-200 text-blue-900 font-semibold">CH₄ + Br₂ --hν--> CH₃Br + HBr</p>
+                                <span class="inline-block bg-blue-200 text-blue-800 text-[10px] px-2 py-0.5 rounded font-bold">เบาะแส: ได้ HBr เสมอ</span>
+                            </div>
+
+                            <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2">
+                                <h4 class="font-bold text-emerald-900 text-sm">2. Addition (เติม)</h4>
+                                <p class="text-emerald-800">เกิดกับ Alkene โดยเปลี่ยน C=C กลายเป็น C-C แล้วเติมอะตอมใหม่</p>
+                                <p class="code-font bg-white p-2 rounded border border-emerald-200 text-emerald-900 font-semibold">CH₂=CH₂ + Br₂ --> CH₂Br-CH₂Br</p>
+                                <span class="inline-block bg-emerald-200 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-bold">เบาะแส: ไม่มี HBr เกิดขึ้น</span>
+                            </div>
+
+                            <div class="p-4 bg-red-50 border border-red-200 rounded-xl space-y-2">
+                                <h4 class="font-bold text-red-900 text-sm">3. Elimination (กำจัด)</h4>
+                                <p class="text-red-800">ดึงอะตอมออกจาก Alkane (C-C) เกิดเป็น Alkene (C=C)</p>
+                                <p class="code-font bg-white p-2 rounded border border-red-200 text-red-900 font-semibold">C₂H₆ --> C₂H₄ + H₂</p>
+                                <span class="inline-block bg-red-200 text-red-800 text-[10px] px-2 py-0.5 rounded font-bold">ตรงข้ามกับ Addition</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            combustion: {
+                title: "4. Combustion & Reverse Combustion",
+                content: `
+                    <div class="space-y-4 text-xs">
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                            <h4 class="font-bold text-slate-800 text-sm">สมการเผาไหม้สมบูรณ์ (Complete Combustion)</h4>
+                            <p class="text-slate-600">Hydrocarbon + O₂ → CO₂ + H₂O</p>
+                            <p class="code-font bg-indigo-50 p-2.5 rounded border border-indigo-200 text-indigo-900 font-semibold">C₃H₈ + 5O₂ → 3CO₂ + 4H₂O</p>
+                        </div>
+
+                        <div class="p-4 bg-purple-50 border border-purple-200 rounded-xl space-y-2">
+                            <h4 class="font-bold text-purple-900 text-sm">Reverse Combustion (คำนวณย้อนหาสูตร)</h4>
+                            <p class="text-purple-800">หากเผาไหม้แล้วได้ CO₂ จำนวน a โมล และ H₂O จำนวน b โมล:</p>
+                            <div class="p-3 bg-white rounded border border-purple-200 text-purple-900 font-bold code-font text-sm">
+                                สูตรโมเลกุลคือ: CₐH₂ᵦ
+                            </div>
+                            <p class="text-purple-700 text-[11px]">ตัวอย่าง: ได้ CO₂ 3 mol และ H₂O 4 mol → C = 3, H = 4×2 = 8 → C₃H₈</p>
+                        </div>
+                    </div>
+                `
+            },
+            isomer: {
+                title: "5. Structural Isomers Algorithm",
+                content: `
+                    <div class="space-y-4 text-xs">
+                        <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl space-y-2">
+                            <h4 class="font-bold text-amber-900 text-sm">Algorithm ขั้นตอนการหา Isomer ไม่ให้ซ้ำ</h4>
+                            <ol class="list-decimal pl-4 space-y-1 text-amber-800">
+                                <li>วาด Carbon Chain สายตรงยาวที่สุดก่อน</li>
+                                <li>ลดความยาวสายหลักลงทีละ 1 คาร์บอน เพื่อนำมาต่อเป็นกิ่ง (Branch)</li>
+                                <li>ลองวางตำแหน่งกิ่งในทุกตำแหน่งที่เป็นไปได้</li>
+                                <li>ใช้หลัก Symmetry (ความสมมาตร) ตรวจสอบโมเลกุลที่วาดกลับด้าน</li>
+                                <li>ตั้งชื่อ IUPAC ของทุกไอโซเมอร์ ถ้าชื่อซ้ำแปลว่าเป็นสารเดียวกัน</li>
+                            </ol>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                                <h5 class="font-bold text-slate-800 mb-2">C₄H₁₀ (มี 2 isomers)</h5>
+                                <ul class="space-y-1 code-font text-slate-700">
+                                    <li>1. butane (สายตรง 4 C)</li>
+                                    <li>2. 2-methylpropane (สายหลัก 3 C + กิ่ง 1 C)</li>
+                                </ul>
+                            </div>
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                                <h5 class="font-bold text-slate-800 mb-2">C₅H₁₂ (มี 3 isomers)</h5>
+                                <ul class="space-y-1 code-font text-slate-700">
+                                    <li>1. pentane (สายตรง 5 C)</li>
+                                    <li>2. 2-methylbutane (สายหลัก 4 C + กิ่ง 1 C)</li>
+                                    <li>3. 2,2-dimethylpropane (สายหลัก 3 C + กิ่ง 2 C)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            aromatic: {
+                title: "6. Aromatic Substitution (Benzene C₆H₆)",
+                content: `
+                    <div class="space-y-4 text-xs">
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                            <h4 class="font-bold text-slate-800 text-sm">ตำแหน่งการแทนที่บนวงแหวนเบนซีน (Benzene Ring)</h4>
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                                    <span class="font-bold text-indigo-900 block text-sm">Ortho (o-)</span>
+                                    <span class="text-indigo-700 font-mono">ตำแหน่ง 1,2</span>
+                                </div>
+                                <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                                    <span class="font-bold text-indigo-900 block text-sm">Meta (m-)</span>
+                                    <span class="text-indigo-700 font-mono">ตำแหน่ง 1,3</span>
+                                </div>
+                                <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                                    <span class="font-bold text-indigo-900 block text-sm">Para (p-)</span>
+                                    <span class="text-indigo-700 font-mono">ตำแหน่ง 1,4</span>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 mt-2">
+                                *ข้อควรระวัง: ในการหาผลิตภัณฑ์จากปฏิกิริยาแทนที่ 2 รอบ ต้องตรวจความสมมาตรของวงแหวนเพื่อไม่ให้นับสารชนิดเดียวกันซ้ำ
+                            </p>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Quiz Questions Data
+        const quizQuestions = [
+            {
+                question: "ข้อใดคือผลิตภัณฑ์ที่เกิดขึ้นจากปฏิกิริยาระหว่าง CH₄ และ Br₂ เมื่อมีแสงแดด (UV light)?",
+                options: ["CH₃Br + HBr", "CH₂Br₂ + H₂", "CH₃Br เท่านั้น", "C₂H₆ + Br₂"],
+                answer: 0,
+                topic: "Substitution Reaction",
+                explanation: "Alkane + Halogen ในสภาวะที่มีแสงแดด/UV จะเกิดปฏิกิริยาแทนที่ (Substitution) ได้ Haloalkane และกรดไฮโดรฮาลิก (HBr) เป็น Byproduct"
+            },
+            {
+                question: "ข้อใดคือประเภทของปฏิกิริยา: CH₂=CH₂ + Br₂ → CH₂Br-CH₂Br ?",
+                options: ["Substitution", "Addition", "Elimination", "Combustion"],
+                answer: 1,
+                topic: "Addition Reaction",
+                explanation: "Alkene มีพันธะคู่ C=C จะเกิดปฏิกิริยาเติม (Addition) พันธะคู่สลายเปลี่ยนเป็นพันธะเดี่ยวและไม่มี HBr เกิดขึ้น"
+            },
+            {
+                question: "นำ Hydrocarbon ชนิดหนึ่งมาเผาไหม้สมบูรณ์ ได้ CO₂ จำนวน 4 mol และ H₂O จำนวน 5 mol สารนี้มีสูตรโมเลกุลคืออะไร?",
+                options: ["C₄H₈", "C₄H₁₀", "C₅H₁₂", "C₃H₈"],
+                answer: 1,
+                topic: "Reverse Combustion",
+                explanation: "จากหลัก Reverse Combustion: โมล C = โมล CO₂ = 4 และ โมล H = 2 × โมล H₂O = 2 × 5 = 10 ดังนั้นสูตรคือ C₄H₁₀"
+            },
+            {
+                question: "โครงสร้าง C₅H₁₂ มี Structural Isomers ทั้งหมดกี่แบบ?",
+                options: ["2 แบบ", "3 แบบ", "4 แบบ", "5 แบบ"],
+                answer: 1,
+                topic: "Isomers",
+                explanation: "C₅H₁₂ มี 3 ไอโซเมอร์ ได้แก่ pentane, 2-methylbutane และ 2,2-dimethylpropane"
+            },
+            {
+                question: "ปฏิกิริยา C₂H₆ → C₂H₄ + H₂ จัดเป็นปฏิกิริยาประเภทใด?",
+                options: ["Substitution", "Addition", "Elimination / Dehydrogenation", "Combustion"],
+                answer: 2,
+                topic: "Elimination Reaction",
+                explanation: "การดึงอะตอม H₂ ออกจาก Alkane ทำให้เกิดพันธะคู่ C=C จัดเป็นปฏิกิริยากำจัด (Elimination หรือ Dehydrogenation)"
+            },
+            {
+                question: "ชื่อตามระบบ IUPAC ของโครงสร้าง CH₃-CHBr-CH₂-CH₃ คือข้อใด?",
+                options: ["1-bromobutane", "2-bromobutane", "3-bromobutane", "2-bromopropane"],
+                answer: 1,
+                topic: "IUPAC Nomenclature",
+                explanation: "สายคาร์บอนหลักยาว 4 คาร์บอน (butane) กำหนดเลขตำแหน่งจากด้านขวาหรือซ้ายให้ Br ได้เลขต่ำสุด คือ ตำแหน่งที่ 2 จึงเรียกว่า 2-bromobutane"
+            },
+            {
+                question: "ตำแหน่งการแทนที่บนวงแหวนเบนซีน (Benzene) แบบ Meta (m-) หมายถึงตำแหน่งใด?",
+                options: ["ตำแหน่ง 1,2", "ตำแหน่ง 1,3", "ตำแหน่ง 1,4", "ตำแหน่ง 1,5"],
+                answer: 1,
+                topic: "Aromatic Substitution",
+                explanation: "Ortho = 1,2 | Meta = 1,3 | Para = 1,4"
+            },
+            {
+                question: "ปฏิกิริยาในขั้นใดของ Reaction Chain ต่อไปนี้เป็น Addition? (Alkane → Alkene → Dibromoalkane)",
+                options: ["ขั้น Alkane → Alkene", "ขั้น Alkene → Dibromoalkane", "ทั้งสองขั้น", "ไม่มีขั้นใดเลย"],
+                answer: 1,
+                topic: "Reaction Chain",
+                explanation: "ขั้น Alkane → Alkene คือ Elimination (-H₂) ส่วนขั้น Alkene → Dibromoalkane (+ Br₂) คือ Addition"
+            },
+            {
+                question: "สมการดุลการเผาไหม้สมบูรณ์ของ C₃H₈ + O₂ → CO₂ + H₂O ต้องใช้สัมประสิทธิ์ของ O₂ เท่าใด?",
+                options: ["3", "4", "5", "7"],
+                answer: 2,
+                topic: "Combustion",
+                explanation: "C₃H₈ + 5O₂ → 3CO₂ + 4H₂O (ฝั่งขวามี O รวม 3(2) + 4(1) = 10 อะตอม จึงใช้ 5O₂)"
+            },
+            {
+                question: "ชื่อ IUPAC ของ CH₂=CH-CH₂-CH₃ คือข้อใด?",
+                options: ["but-1-ene", "but-2-ene", "but-3-ene", "butene"],
+                answer: 0,
+                topic: "IUPAC Nomenclature",
+                explanation: "นับตำแหน่งจากฝั่งซ้ายเพื่อให้พันธะคู่ได้เลขต่ำสุด คือ ตำแหน่งที่ 1 ได้ชื่อว่า but-1-ene"
+            }
+        ];
+
+        // Classification Simulator Data
+        const classQuestions = [
+            { eq: "CH₄ + Br₂ --hν/light--> CH₃Br + HBr", type: "substitution" },
+            { eq: "CH₂=CH₂ + Br₂ --> CH₂Br-CH₂Br", type: "addition" },
+            { eq: "C₂H₆ --> C₂H₄ + H₂", type: "elimination" },
+            { eq: "C₃H₈ + 5O₂ --> 3CO₂ + 4H₂O", type: "combustion" }
+        ];
+
+        // Navigation Tab Switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-800', 'text-white');
+                btn.classList.add('text-indigo-200');
+            });
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.add('bg-indigo-800', 'text-white');
+            }
+
+            if (tabId === 'lessons') {
+                loadLesson('basics');
+            }
+        }
+
+        // Toggle Mobile Nav Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Load Lesson Content
+        function loadLesson(lessonKey) {
+            const data = lessonsData[lessonKey];
+            if (!data) return;
+
+            const container = document.getElementById('lesson-content-container');
+            container.innerHTML = `
+                <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                    <h3 class="text-lg font-bold text-slate-800">${data.title}</h3>
+                    <button onclick="markLessonComplete('${lessonKey}')" class="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-xs font-semibold flex items-center gap-1">
+                        <i data-lucide="check" class="w-4 h-4"></i> ทำเครื่องหมายเรียนแล้ว
+                    </button>
+                </div>
+                ${data.content}
+            `;
+            lucide.createIcons();
+
+            // Update Tab Style
+            document.querySelectorAll('.lesson-tab').forEach(tab => {
+                tab.classList.remove('border-indigo-600', 'text-indigo-600', 'font-semibold');
+                tab.classList.add('border-transparent', 'text-slate-500');
+            });
+        }
+
+        function markLessonComplete(lessonKey) {
+            state.completedLessons.add(lessonKey);
+            document.getElementById('completed-count').innerText = state.completedLessons.size;
+            alert('บันทึกการเรียนรู้เรียบร้อยแล้ว!');
+        }
+
+        // Reverse Combustion Calculation Logic
+        function calculateMolecularFormula() {
+            const co2 = parseFloat(document.getElementById('input-co2').value) || 0;
+            const h2o = parseFloat(document.getElementById('input-h2o').value) || 0;
+
+            const cCount = co2;
+            const hCount = h2o * 2;
+
+            const outputEl = document.getElementById('formula-output');
+            const expEl = document.getElementById('formula-explanation');
+
+            if (cCount <= 0 || hCount <= 0) {
+                outputEl.innerText = "ข้อมูลไม่ถูกต้อง";
+                expEl.innerText = "กรุณากรอกค่าโมลที่มากกว่า 0";
+                return;
+            }
+
+            outputEl.innerText = `C${cCount}H${hCount}`;
+            expEl.innerHTML = `
+                • จำนวน Carbon (C) = โมล CO₂ = ${cCount}<br>
+                • จำนวน Hydrogen (H) = 2 × โมล H₂O = 2 × ${h2o} = ${hCount}<br>
+                • สูตรโมเลกุลที่ได้คือ: <strong>C${cCount}H${hCount}</strong>
+            `;
+        }
+
+        // Reaction Classifier Logic
+        function checkReactionClass(selectedType) {
+            const current = classQuestions[state.classifierIdx];
+            const feedback = document.getElementById('classifier-feedback');
+            feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-red-100', 'text-red-800');
+
+            if (selectedType === current.type) {
+                feedback.classList.add('bg-emerald-100', 'text-emerald-800');
+                feedback.innerHTML = `✓ ถูกต้อง! ปฏิกิริยานี้คือ <strong>${current.type.toUpperCase()}</strong>`;
+            } else {
+                feedback.classList.add('bg-red-100', 'text-red-800');
+                feedback.innerHTML = `✕ ยังไม่ถูกต้อง คำตอบที่ถูกคือ <strong>${current.type.toUpperCase()}</strong>`;
+            }
+        }
+
+        function nextReactionClassQuestion() {
+            state.classifierIdx = (state.classifierIdx + 1) % classQuestions.length;
+            const current = classQuestions[state.classifierIdx];
+            document.getElementById('classifier-equation').innerText = current.eq;
+            document.getElementById('classifier-feedback').classList.add('hidden');
+        }
+
+        // Mock Quiz Functions
+        function renderQuestion() {
+            const q = quizQuestions[state.currentQuestionIdx];
+            document.getElementById('question-number-badge').innerText = `ข้อที่ ${state.currentQuestionIdx + 1} / ${quizQuestions.length}`;
+            document.getElementById('question-text').innerText = q.question;
+
+            // Update Progress Bar
+            const progressPct = ((state.currentQuestionIdx + 1) / quizQuestions.length) * 100;
+            document.getElementById('quiz-progress').style.width = `${progressPct}%`;
+
+            // Render Options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const selectedAns = state.userAnswers[state.currentQuestionIdx];
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-3.5 rounded-xl border text-sm transition flex items-center justify-between ${
+                    selectedAns === idx
+                        ? 'border-indigo-600 bg-indigo-50 font-semibold text-indigo-900'
+                        : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                }`;
+                btn.onclick = () => selectOption(idx);
+                btn.innerHTML = `
+                    <span>${opt}</span>
+                    <span class="w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center text-xs font-bold ${
+                        selectedAns === idx ? 'bg-indigo-600 text-white border-indigo-600' : ''
+                    }">${String.fromCharCode(65 + idx)}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Explanation visibility
+            const expBanner = document.getElementById('answer-explanation');
+            if (selectedAns !== undefined) {
+                expBanner.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-900', 'bg-red-50', 'border-red-200', 'text-red-900');
+                const isCorrect = selectedAns === q.answer;
+                expBanner.classList.add(isCorrect ? 'bg-emerald-50' : 'bg-red-50', isCorrect ? 'border-emerald-200' : 'border-red-200');
+                document.getElementById('explanation-title').innerText = isCorrect ? '✓ ตอบถูกต้อง!' : '✕ ตอบไม่ถูกต้อง';
+                document.getElementById('explanation-text').innerText = q.explanation;
+            } else {
+                expBanner.classList.add('hidden');
+            }
+
+            // Buttons state
+            document.getElementById('prev-btn').disabled = state.currentQuestionIdx === 0;
+            document.getElementById('next-btn').innerText = state.currentQuestionIdx === quizQuestions.length - 1 ? 'ส่งข้อสอบ' : 'ข้อถัดไป';
+        }
+
+        function selectOption(optionIdx) {
+            state.userAnswers[state.currentQuestionIdx] = optionIdx;
+            const q = quizQuestions[state.currentQuestionIdx];
+            if (optionIdx !== q.answer) {
+                state.weakTopics.add(q.topic);
+            }
+            renderQuestion();
+        }
+
+        function nextQuestion() {
+            if (state.currentQuestionIdx < quizQuestions.length - 1) {
+                state.currentQuestionIdx++;
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function prevQuestion() {
+            if (state.currentQuestionIdx > 0) {
+                state.currentQuestionIdx--;
+                renderQuestion();
+            }
+        }
+
+        function finishQuiz() {
+            let score = 0;
+            quizQuestions.forEach((q, idx) => {
+                if (state.userAnswers[idx] === q.answer) {
+                    score++;
+                }
+            });
+
+            document.getElementById('quiz-question-card').classList.add('hidden');
+            document.getElementById('quiz-result-card').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('last-score').innerText = `${score}/10`;
+
+            // Weak Topics Display
+            const weakListEl = document.getElementById('weak-topics-list');
+            weakListEl.innerHTML = '';
+            if (state.weakTopics.size > 0) {
+                state.weakTopics.forEach(topic => {
+                    const li = document.createElement('li');
+                    li.innerText = topic;
+                    weakListEl.appendChild(li);
+                });
+            } else {
+                weakListEl.innerHTML = '<li>ยอดเยี่ยมมาก! ไม่มีหัวข้อที่ทำผิดพลาดเลย</li>';
+            }
+        }
+
+        function resetQuiz() {
+            state.currentQuestionIdx = 0;
+            state.userAnswers = [];
+            state.weakTopics.clear();
+            document.getElementById('quiz-question-card').classList.remove('hidden');
+            document.getElementById('quiz-result-card').classList.add('hidden');
+            renderQuestion();
+        }
+
+        // App Initialization
+        window.onload = function() {
+            lucide.createIcons();
+            calculateMolecularFormula();
+            renderQuestion();
+        };
+    </script>
+</body>
+</html>
