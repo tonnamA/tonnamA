@@ -1,0 +1,66 @@
+/* Blueprint Paper Syntax Theme matching --code-bg */
+.hljs {
+  background: transparent;
+  color: var(--ink);
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--ink-mute);
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst,
+.hljs-built_in {
+  color: var(--blueprint);
+  font-weight: 600;
+}
+
+.hljs-string,
+.hljs-doctag,
+.hljs-regexp {
+  color: #167a4d;
+}
+
+[data-theme="dark"] .hljs-string,
+[data-theme="dark"] .hljs-doctag {
+  color: #6ee7b7;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable {
+  color: var(--warn);
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id,
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #8f2d56;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .hljs-title,
+[data-theme="dark"] .hljs-section,
+[data-theme="dark"] .hljs-type {
+  color: #f472b6;
+}
+
+.hljs-attr,
+.hljs-attribute,
+.hljs-name {
+  color: var(--blueprint);
+}
+
+.hljs-addition {
+  background: rgba(22, 122, 77, 0.14);
+}
+
+.hljs-deletion {
+  background: rgba(180, 35, 24, 0.14);
+}
